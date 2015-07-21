@@ -28,7 +28,8 @@ contains(COMPILER, mingw) {
 contains(COMPILER, msvc) {
     QMAKE_CXX += /FS
     DEFINES += "WINVER=0x0501"
-    DEFINES += WIN32 _WIN32_WINNT=0x0501
+    DEFINES += WIN32 _WIN32_WINNT=0x0501 
+	#QT_NO_CAST_FROM_ASCII
 }
 
 SOURCES += Main.cpp GamepadDemo.cpp ../Widgets/ScaledImage.cpp
