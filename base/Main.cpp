@@ -5,7 +5,7 @@
 #include "versioninfo.h"
 #include "../util/path_helpers.h"
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include <QTranslator>
 #include <QMessageBox>
 #include <QSettings>

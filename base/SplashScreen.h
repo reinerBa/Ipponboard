@@ -8,8 +8,8 @@
 //
 // $Id$
 
-#include <QDialog>
-#include <QDate>
+#include <QtWidgets/QDialog>
+#include <QtCore/QDate>
 
 namespace Ui
 {

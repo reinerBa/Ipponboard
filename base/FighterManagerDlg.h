@@ -7,9 +7,9 @@
 #ifndef BASE_FIGHTERMANAGERDLG_H
 #define BASE_FIGHTERMANAGERDLG_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include <QString>
-#include <QTreeWidgetItem>
+#include <QtWidgets/QTreeWidgetItem>
 
 // forwards
 namespace Ui { class FighterManagerDlg; }

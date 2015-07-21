@@ -33,8 +33,8 @@
 #include <QInputDialog>
 #include <QMenu>
 #include <QMessageBox>
-#include <QPrintPreviewDialog>
-#include <QPrinter>
+#include <QtPrintSupport/QPrintPreviewDialog>
+#include <QtPrintSupport/QPrinter>
 #include <QSettings>
 #include <QSplashScreen>
 #include <QTableView>
@@ -151,10 +151,10 @@ void MainWindowTeam::Init()
 	m_pUi->tableView_tournament_list2->setItemDelegateForColumn(TournamentModel::eCol_name2, cbxFightersGuest);
 #endif
     // make name columns auto-resizable
-    m_pUi->tableView_tournament_list1->horizontalHeader()->setResizeMode(TournamentModel::eCol_name1, QHeaderView::Stretch);
-    m_pUi->tableView_tournament_list1->horizontalHeader()->setResizeMode(TournamentModel::eCol_name2, QHeaderView::Stretch);
-    m_pUi->tableView_tournament_list2->horizontalHeader()->setResizeMode(TournamentModel::eCol_name1, QHeaderView::Stretch);
-    m_pUi->tableView_tournament_list2->horizontalHeader()->setResizeMode(TournamentModel::eCol_name2, QHeaderView::Stretch);
+    m_pUi->tableView_tournament_list1->horizontalHeader()->setSectionResizeMode(TournamentModel::eCol_name1, QHeaderView::Stretch);
+    m_pUi->tableView_tournament_list1->horizontalHeader()->setSectionResizeMode(TournamentModel::eCol_name2, QHeaderView::Stretch);
+    m_pUi->tableView_tournament_list2->horizontalHeader()->setSectionResizeMode(TournamentModel::eCol_name1, QHeaderView::Stretch);
+    m_pUi->tableView_tournament_list2->horizontalHeader()->setSectionResizeMode(TournamentModel::eCol_name2, QHeaderView::Stretch);
 
 	// TEMP: hide weight cotrol
 //	m_pUi->label_weight->hide();

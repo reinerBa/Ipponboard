@@ -7,7 +7,7 @@
 #include <QDesktopWidget>
 #include <QFile>
 #include <QDir>
-#include <QSound>
+#include <Qtmultimedia/QSound>
 #include <QColorDialog>
 
 using namespace Ipponboard;

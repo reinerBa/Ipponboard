@@ -16,7 +16,7 @@
 
 #include "../core/TournamentMode.h"
 #include "../util/DialogResult.h"
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include <memory>
 
 class QStringList;

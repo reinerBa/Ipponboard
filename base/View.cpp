@@ -1018,7 +1018,7 @@ void View::update_hold_clock(FighterEnum holder, EHoldState state) const
 		}
 		else
 		{
-			Q_ASSERT(FALSE);
+			Q_ASSERT(false);
 		}
 	}
 }

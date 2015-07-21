@@ -3,8 +3,8 @@
 
 #include "FightCategoryManager.h"
 
-#include <QDialog>
-#include <QTreeWidgetItem>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QTreeWidgetItem>
 
 // forwards
 namespace Ui { class FightCategoryManagerDlg; }

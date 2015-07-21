@@ -8,7 +8,7 @@
 #ifndef ADDFIGHTERDLG_H
 #define ADDFIGHTERDLG_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 
 namespace Ui {
 class AddFighterDlg;

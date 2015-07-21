@@ -7,7 +7,7 @@
 #include "../core/ControllerConfig.h"
 #include "../util/helpers.hpp"
 
-#include <QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include <vector>
 #include <memory>
 

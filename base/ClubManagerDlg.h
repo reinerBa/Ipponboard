@@ -1,7 +1,7 @@
 #ifndef BASE__CLUBMANAGERDLG_H_
 #define BASE__CLUBMANAGERDLG_H_
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include <memory>
 
 // forwards

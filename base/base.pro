@@ -1,5 +1,5 @@
 #------------------------------------------------------------------------------
-QT += xmlpatterns
+QT += widgets printsupport multimedia xmlpatterns
 
 # This app depends on:
 #   - gamepad

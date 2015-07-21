@@ -2,7 +2,7 @@
 #define BASE__SETTINGSDLG_H_
 
 #include "../core/EditionType.h"
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include <map>
 
 class QComboBox;
