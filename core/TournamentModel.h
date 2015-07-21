@@ -4,7 +4,7 @@
 #include "Tournament.h"
 
 #include <QAbstractTableModel>
-#include <QLineEdit>
+#include <QtWidgets/QLineEdit>
 
 class TournamentModel : public QAbstractTableModel
 {

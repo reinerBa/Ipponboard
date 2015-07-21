@@ -8,7 +8,7 @@
 //
 // $Id$
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 #include <QImage>
 #include <QResizeEvent>
 

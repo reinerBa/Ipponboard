@@ -1,8 +1,8 @@
 #ifndef GAMEPADDEMO__GAMEPADDEMO_H_
 #define GAMEPADDEMO__GAMEPADDEMO_H_
 
-#include <QMainWindow>
-#include <QLabel>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QLabel>
 #include <memory>
 
 namespace Ui

@@ -7,9 +7,9 @@
 #include "StateMachine.h"
 
 #include <QTimer>
-#include <QSound>
+#include <QtMultimedia/QSound>
 #include <QFileInfo>
-#include <QMessageBox>
+#include <QtWidgets/QMessageBox>
 #include <algorithm>
 #include <functional>
 

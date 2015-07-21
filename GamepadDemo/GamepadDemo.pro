@@ -4,6 +4,7 @@
 TEMPLATE = app
 TARGET = GamepadDemo
 DESTDIR = ../bin
+QT += widgets
 
 build_pass:CONFIG(release, debug|release) {
 	QMAKE_LIBS += -lgamepad -lwinmm
