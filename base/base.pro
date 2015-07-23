@@ -1,4 +1,7 @@
-#------------------------------------------------------------------------------
+TARGET = Ipponboard
+DESTDIR = $$shell_path($$_PRO_FILE_PWD_/../bin)
+TEMPLATE = app
+LANGUAGE = C++
 QT += widgets printsupport multimedia xmlpatterns
 
 # This app depends on:
@@ -7,10 +10,8 @@ QT += widgets printsupport multimedia xmlpatterns
 # These need to be build first.
 #PRE_TARGETDEPS += ../gamepad ../core
 
-TEMPLATE = app
-LANGUAGE = C++
 CONFIG += windows precompile_header
-DEFINES += _WIN32
+DEFINES += _WIN32 WIN32 "WINVER=0x0501" "_WIN32_WINNT=0x0501"
 
 # Use Precompiled headers (PCH)
 # (inclusion of header in HEADERS section is not required!)
@@ -22,17 +23,65 @@ INCLUDEPATH += $$quote($$(BOOST_DIR))
 QMAKE_LIBDIR += $$quote($$(BOOST_DIR)/stage/lib) \
     ../lib
 
-DESTDIR = ../bin
-
-CONFIG(debug, release|debug) {
-    TARGET = Ipponboard_d
-    QMAKE_LIBS += -lgamepad_d -lcore_d -lshell32 -lWinmm
-}
 
 CONFIG(release, release|debug) {
-    TARGET = Ipponboard
     QMAKE_LIBS += -lgamepad -lcore -lshell32 -lWinmm
+
+	# copy required DLLs to output dir
+	Qt5CoreDll.target = $$DESTDIR/Qt5Core.dll
+	Qt5GuiDll.target = $$DESTDIR/Qt5Gui.dll
+	Qt5PrintSupportDll.target = $$DESTDIR/Qt5PrintSupport.dll
+	Qt5WidgetsDll.target = $$DESTDIR/Qt5Widgets.dll
+	Qt5MultimediaDll.target = $$DESTDIR/Qt5Multimedia.dll
+	Qt5NetworkDll.target = $$DESTDIR/Qt5Network.dll
+	Qt5XmlPatternsDll.target = $$DESTDIR/Qt5XmlPatterns.dll
+	Qt5CoreDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Core.dll)" $$DESTDIR
+	Qt5GuiDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Gui.dll)" $$DESTDIR
+	Qt5PrintSupportDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5PrintSupport.dll)" $$DESTDIR
+	Qt5WidgetsDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Widgets.dll)" $$DESTDIR
+	Qt5MultimediaDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Multimedia.dll)" $$DESTDIR
+	Qt5NetworkDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Network.dll)" $$DESTDIR
+	Qt5XmlPatternsDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5XmlPatterns.dll)" $$DESTDIR
+	QMAKE_EXTRA_TARGETS += Qt5CoreDll Qt5GuiDll Qt5PrintSupportDll Qt5WidgetsDll Qt5MultimediaDll Qt5NetworkDll Qt5XmlPatternsDll
+	POST_TARGETDEPS += \
+		$$DESTDIR/Qt5Core.dll \
+		$$DESTDIR/Qt5Gui.dll \
+		$$DESTDIR/Qt5PrintSupport.dll \
+		$$DESTDIR/Qt5Widgets.dll \
+		$$DESTDIR/Qt5Multimedia.dll \
+		$$DESTDIR/Qt5Network.dll \
+		$$DESTDIR/Qt5XmlPatterns.dll
 }
+
+CONFIG(debug, release|debug) {
+	TARGET = Ipponboard_d
+	QMAKE_LIBS += -lgamepad_d -lcore_d -lshell32 -lWinmm	
+
+	# copy required DLLs to output dir
+	Qt5CoreDll.target = $$DESTDIR/Qt5Cored.dll
+	Qt5GuiDll.target = $$DESTDIR/Qt5Guid.dll
+	Qt5PrintSupportDll.target = $$DESTDIR/Qt5PrintSupportd.dll
+	Qt5WidgetsDll.target = $$DESTDIR/Qt5Widgetsd.dll
+	Qt5MultimediaDll.target = $$DESTDIR/Qt5Multimediad.dll
+	Qt5NetworkDll.target = $$DESTDIR/Qt5Networkd.dll
+	Qt5XmlPatternsDll.target = $$DESTDIR/Qt5XmlPatternsd.dll
+	Qt5CoreDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Cored.dll)" $$DESTDIR
+	Qt5GuiDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Guid.dll)" $$DESTDIR
+	Qt5PrintSupportDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5PrintSupportd.dll)" $$DESTDIR
+	Qt5WidgetsDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Widgetsd.dll)" $$DESTDIR
+	Qt5MultimediaDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Multimediad.dll)" $$DESTDIR
+	Qt5NetworkDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Networkd.dll)" $$DESTDIR
+	Qt5XmlPatternsDll.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5XmlPatternsd.dll)" $$DESTDIR
+	QMAKE_EXTRA_TARGETS += Qt5CoreDll Qt5GuiDll Qt5PrintSupportDll Qt5WidgetsDll Qt5MultimediaDll Qt5NetworkDll Qt5XmlPatternsDll
+	POST_TARGETDEPS += \
+		$$DESTDIR/Qt5Cored.dll \
+		$$DESTDIR/Qt5Guid.dll \
+		$$DESTDIR/Qt5PrintSupportd.dll \
+		$$DESTDIR/Qt5Widgetsd.dll \
+		$$DESTDIR/Qt5Multimediad.dll \
+		$$DESTDIR/Qt5Networkd.dll \
+		$$DESTDIR/Qt5XmlPatternsd.dll
+} 
 
 QMAKE_LFLAGS += /SUBSYSTEM:WINDOWS,5.01
 
@@ -52,8 +101,6 @@ contains(COMPILER, mingw) {
 
 contains(COMPILER, msvc) {
     QMAKE_CXX += /FS /MP
-    DEFINES += "WINVER=0x0501"
-    DEFINES += WIN32 _WIN32_WINNT=0x0501
 
     # remove unneccessary output files
     QMAKE_POST_LINK += del /Q ..\\bin\\$${TARGET}.exp ..\\bin\\$${TARGET}.lib

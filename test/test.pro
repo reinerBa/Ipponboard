@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += console
 TARGET = IpponboardTest
-DESTDIR = bin
+DESTDIR = $$shell_path($$_PRO_FILE_PWD_/../bin)
 
 HEADERS = \
 	TestJson.hpp \
@@ -22,16 +22,15 @@ QMAKE_CXXFLAGS += -EHsc
 
 # Copy required DLLs to output directory
 CONFIG(debug, debug|release) {
-    #QMAKE_POST_LINK += copy /Y "$$[QT_INSTALL_BINS]\\Qt5Cored.dll" bin
-    Qt5Core.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Cored.dll)" bin
-    Qt5Cored.target = bin/QtCored4.dll
+    Qt5Core.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Cored.dll)" $$DESTDIR
+    Qt5Cored.target = $$DESTDIR/QtCored5.dll
     QMAKE_EXTRA_TARGETS += Qt5Cored
-    POST_TARGETDEPS += bin/Qt5Cored.dll
+    POST_TARGETDEPS += $$DESTDIR/Qt5Cored.dll
 } else:CONFIG(release, debug|release) {
-    Qt5Core.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Core.dll)" bin
-    Qt5Core.target = bin/Qt5Core.dll
+    Qt5Core.commands = copy /Y "$$shell_path($$[QT_INSTALL_BINS]/Qt5Core.dll)" $$DESTDIR
+    Qt5Core.target = $$DESTDIR/Qt5Core.dll
     QMAKE_EXTRA_TARGETS += Qt5Core
-    POST_TARGETDEPS += bin/Qt5Core.dll
+    POST_TARGETDEPS += $$DESTDIR/Qt5Core.dll
 } else {
     error(Unknown set of dependencies.)
 }
