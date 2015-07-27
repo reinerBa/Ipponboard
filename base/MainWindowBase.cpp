@@ -588,7 +588,7 @@ void MainWindowBase::read_settings()
 	settings.beginGroup(str_tag_Sounds);
 	{	
 		m_pController->SetGongFile(settings.value(str_tag_sound_time_ends,
-								"sounds/buzzer1.wav").toString());
+								"sounds/gong.wav").toString());
 	}
 	settings.endGroup();
 
