@@ -1,27 +1,27 @@
 TEMPLATE = lib
 LANGUAGE = C++
 CONFIG += precompile_header static exceptions
-DEFINES += _WIN32
+DEFINES += _WIN32 "WINVER=0x0501" WIN32 "_WIN32_WINNT=0x0501"
 
 # Use Precompiled headers (PCH)
 # (inclusion of header in HEADERS section is not required!)
 #PRECOMPILED_HEADER = ../base/pch.h
 #disabled due to mingw reasons
 
-INCLUDEPATH += $$quote($$(BOOST_DIR))
+INCLUDEPATH += $$shell_path($$(BOOST_DIR))
 
-QMAKE_LIBDIR += $$quote($$(BOOST_DIR)/stage/lib)
+QMAKE_LIBDIR += $$shell_path($$(BOOST_DIR)/stage/lib)
 
-DESTDIR = ../lib
+DESTDIR = $$shell_path(../lib)
 
 #----------------------------------------------------------
 # Create our custom prebuild target for the release build
 #----------------------------------------------------------
-prebuild.commands = ..\\base\\create_versioninfo.cmd
-QMAKE_EXTRA_TARGETS += prebuild
-# Hook our prebuild target in between qmake's Makefile update and the actual project target.
+prebuild.commands = $$shell_path(../base/create_versioninfo.cmd)
 prebuildhook.depends = prebuild
+QMAKE_EXTRA_TARGETS += prebuild
 CONFIG(release, debug|release):prebuildhook.target = Makefile.Release
+CONFIG(debug, debug|release):prebuildhook.target = Makefile.Debug
 QMAKE_EXTRA_TARGETS += prebuildhook
 
 # Auto select compiler
@@ -47,8 +47,6 @@ contains(COMPILER, mingw) {
 }
 contains(COMPILER, msvc) {
 	QMAKE_CXX += /FS
-	DEFINES += "WINVER=0x0501"
-	DEFINES += WIN32 _WIN32_WINNT=0x0501
 }
 
 HEADERS = \

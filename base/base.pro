@@ -18,7 +18,7 @@ DEFINES += _WIN32 WIN32 "WINVER=0x0501" "_WIN32_WINNT=0x0501"
 #PRECOMPILED_HEADER  = ../base/pch.h
 #disabled for mingw!
 
-INCLUDEPATH += $$quote($$(BOOST_DIR))
+INCLUDEPATH += $$shell_path($$(BOOST_DIR))
 
 QMAKE_LIBDIR += $$quote($$(BOOST_DIR)/stage/lib) \
     ../lib
