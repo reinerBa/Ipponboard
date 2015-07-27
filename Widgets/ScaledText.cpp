@@ -31,10 +31,9 @@ void ScaledText::SetText(const QString& text,
 {
 	set_size(size);
 
-	if (eSize_uppercase == m_textSize)
-		m_Text = text.toUpper();
-	else
-		m_Text = text;
+    m_Text = eSize_uppercase == m_textSize?
+        text.toUpper() :
+        text;
 
 	m_rotate = rotate;
 
@@ -96,18 +95,24 @@ ScaledText::ETextSize ScaledText::GetSize() const
 void ScaledText::SetBlinking(bool blink, int delay)
 {
 	if (blink && -1 != m_timerId && delay == m_timerDelay)
-		return;
+    {
+        return;
+    }
 
 	// kill old timer
-	if (-1 != m_timerId)
-		killTimer(m_timerId);
+    if (-1 != m_timerId)
+    {
+        killTimer(m_timerId);
+    }
 
 	m_timerId = -1;
 	m_timerDelay = delay;
 	m_isVisible = true;
 
-	if (blink)
-		m_timerId = startTimer(delay);
+    if (blink)
+    {
+        m_timerId = startTimer(delay);
+    }
 }
 
 bool ScaledText::IsBlinking() const
@@ -140,7 +145,7 @@ void ScaledText::paintEvent(QPaintEvent* event)
 			painter.translate(width() / 2.0, height() / 2.0);
 
 			QTextLine line = m_pLayout->lineAt(0);
-			line.setLeadingIncluded(false);
+            line.setLeadingIncluded(false);
 
 			const QRectF rect = line.naturalTextRect();
 			Q_ASSERT(rect == m_pLayout->boundingRect());
@@ -148,29 +153,24 @@ void ScaledText::paintEvent(QPaintEvent* event)
 			qreal w = m_rotate ? rect.height() : rect.width();
 			qreal h = m_rotate ? rect.width() : rect.height();
 
-			qreal adjust_y(0);
-
 			if (!m_rotate)
 			{
-				if (eSize_full == m_textSize)
+                if (eSize_full == m_textSize)
 				{
-					h -= line.descent() * 2 + 0.5;
+                    h -= line.descent() * 1.5;
 				}
 				else if (eSize_uppercase == m_textSize)
 				{
-					h -= line.descent() + 2;
-					adjust_y = -line.descent() / 2.5;
-				}
-				else
-				{
-					//adjust_y = line.descent()/2.0;
-				}
+                    h -= line.descent();
+                }
 			}
 
 			const qreal zoom = std::min<qreal>(width() / w, height() / h);
 
 			if (m_rotate)
+            {
 				painter.rotate(-60.0);
+            }
 
 			QPointF center = rect.center();
 
@@ -183,7 +183,7 @@ void ScaledText::paintEvent(QPaintEvent* event)
 				center.setX(-width() / 2.0 / zoom + center.x() * 2);
 			}
 
-			center.setY(center.y() + adjust_y);
+            center.setY(center.y());
 
 			painter.scale(zoom, zoom);
 			line.draw(&painter, -center);
