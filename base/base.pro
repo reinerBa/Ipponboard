@@ -93,6 +93,10 @@ HEADERS = pch.h \
     FightCategoryManager.h \
     FighterManager.h \
     FighterManagerDlg.h \
+    FightCategoryParser.h \
+    ClubParser.h \
+    UpdateChecker.h \
+    VersionComparer.h \
     ../util/array_helpers.h \
     ../util/path_helpers.h \
     ../util/qstring_serialization.h \
@@ -114,14 +118,13 @@ HEADERS = pch.h \
 	../core/TournamentModel.h \
 	../core/ControllerConfig.h \
     ../core/Rules.h \
-    UpdateChecker.h \
-    VersionComparer.h \
+    ../core/AbstractRules.h \
+    ../core/RuleSet.h \
+    ../core/Calculator.h \
+    ../core/ScoreValues.h \
     ../core/iGoldenScoreView.h \
     ../core/iView.h \
-    ../util/json.hpp \
-    FightCategoryParser.h \
-    ClubParser.h
-
+    ../util/json.hpp 
 
 SOURCES = Main.cpp \
     Main.cpp \
@@ -145,11 +148,12 @@ SOURCES = Main.cpp \
     ../widgets/ScaledImage.cpp \
     ../widgets/ScaledText.cpp \
     ../widgets/Countdown.cpp \
+    ../core/Calculator.cpp \
 	../core/Controller.cpp \
 	../core/FightCategory.cpp \
 	../core/Fighter.cpp \
 	../core/Fight.cpp \
-	../core/Score.cpp \
+    ../core/Score.cpp \
 	../core/StateMachine.cpp \
 	../core/TournamentMode.cpp \
 	../core/TournamentModel.cpp \

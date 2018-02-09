@@ -134,49 +134,49 @@ QVariant TournamentModel::data(const QModelIndex& index, int role) const
 				return fight.fighters[0].name;
 
 			case eCol_yuko1:
-				return display_string(fight.is_saved, fight.GetScore1().Yuko());
+				return display_string(fight.is_saved, fight.GetScore().Yuko(First));
 
 			case eCol_wazaari1:
-				return display_string(fight.is_saved, fight.GetScore1().Wazaari());
+				return display_string(fight.is_saved, fight.GetScore().Wazaari(First));
 
 			case eCol_ippon1:
-				return fight.GetScore1().Ippon() ? "1" : "";
+				return display_string(fight.is_saved, fight.GetScore().Ippons(First));
 
 			case eCol_hansokumake1:
-				return fight.GetScore1().Hansokumake() ? "1" : "";
+				return fight.GetScore().Hansokumake(First) ? "1" : "";
 
 			case eCol_shido1:
-				return display_string(fight.is_saved, fight.GetScore1().Shido());
+				return display_string(fight.is_saved, fight.GetScore().Shido(First));
 
 			case eCol_won1:
-				return display_string(fight.is_saved, fight.HasWon(Ipponboard::FighterEnum::First));
+				return display_string(fight.is_saved, fight.HasWon(First));
 
 			case eCol_score1:
-				return display_string(fight.is_saved, fight.GetScorePoints(Ipponboard::FighterEnum::First));
+				return display_string(fight.is_saved, fight.GetScoreValue(First));
 
 			case eCol_name2:
 				return fight.fighters[1].name;
 
 			case eCol_yuko2:
-				return display_string(fight.is_saved, fight.GetScore2().Yuko());
+				return display_string(fight.is_saved, fight.GetScore().Yuko(Second));
 
 			case eCol_wazaari2:
-				return display_string(fight.is_saved, fight.GetScore2().Wazaari());
+				return display_string(fight.is_saved, fight.GetScore().Wazaari(Second));
 
 			case eCol_ippon2:
-				return fight.GetScore2().Ippon() ? "1" : "";
+				return display_string(fight.is_saved, fight.GetScore().Ippons(Second));
 
 			case eCol_hansokumake2:
-				return fight.GetScore2().Hansokumake() ? "1" : "";
+				return fight.GetScore().Hansokumake(Second) ? "1" : "";
 
 			case eCol_shido2:
-				return display_string(fight.is_saved, fight.GetScore2().Shido());
+				return display_string(fight.is_saved, fight.GetScore().Shido(Second));
 
 			case eCol_won2:
 				return display_string(fight.is_saved, fight.HasWon(Ipponboard::FighterEnum::Second));
 
 			case eCol_score2:
-				return display_string(fight.is_saved, fight.GetScorePoints(Ipponboard::FighterEnum::Second));
+				return display_string(fight.is_saved, fight.GetScoreValue(Ipponboard::FighterEnum::Second));
 
 			case eCol_time_remaining:
 				{
@@ -313,26 +313,26 @@ bool TournamentModel::setData(const QModelIndex& index,
 			break;
 
 		case eCol_yuko1:
-			fight.GetScore1().SetValue(Ipponboard::Score::Point::Yuko, value.toInt());
+			fight.SetValue(First, Ipponboard::Point::Yuko, value.toInt());
 			result = true;
 			break;
 
 		case eCol_wazaari1:
-			fight.GetScore1().SetValue(Ipponboard::Score::Point::Wazaari, value.toInt());
+			fight.SetValue(First, Ipponboard::Point::Wazaari, value.toInt());
 			result = true;
 			break;
 
 		case eCol_ippon1:
-			fight.GetScore1().SetValue(Ipponboard::Score::Point::Ippon, value.toInt());
+			fight.SetValue(First, Ipponboard::Point::Ippon, value.toInt());
 			result = true;
 			break;
 
 		case eCol_hansokumake1:
-			fight.GetScore1().SetValue(Ipponboard::Score::Point::Hansokumake, value.toInt());
+			fight.SetValue(First, Ipponboard::Point::Hansokumake, value.toInt());
 			break;
 
 		case eCol_shido1:
-			fight.GetScore1().SetValue(Ipponboard::Score::Point::Shido, value.toInt());
+			fight.SetValue(First, Ipponboard::Point::Shido, value.toInt());
 			break;
 
 		case eCol_won1:
@@ -346,27 +346,27 @@ bool TournamentModel::setData(const QModelIndex& index,
 			break;
 
 		case eCol_yuko2:
-			fight.GetScore2().SetValue(Ipponboard::Score::Point::Yuko, value.toInt());
+			fight.SetValue(Second, Ipponboard::Point::Yuko, value.toInt());
 			result = true;
 			break;
 
 		case eCol_wazaari2:
-			fight.GetScore2().SetValue(Ipponboard::Score::Point::Wazaari, value.toInt());
+			fight.SetValue(Second, Ipponboard::Point::Wazaari, value.toInt());
 			result = true;
 			break;
 
 		case eCol_ippon2:
-			fight.GetScore2().SetValue(Ipponboard::Score::Point::Ippon, value.toInt());
+			fight.SetValue(Second, Ipponboard::Point::Ippon, value.toInt());
 			result = true;
 			break;
 
 		case eCol_hansokumake2:
-			fight.GetScore2().SetValue(Ipponboard::Score::Point::Hansokumake, value.toInt());
+			fight.SetValue(Second, Ipponboard::Point::Hansokumake, value.toInt());
 			result = true;
 			break;
 
 		case eCol_shido2:
-			fight.GetScore2().SetValue(Ipponboard::Score::Point::Shido, value.toInt());
+			fight.SetValue(Second, Ipponboard::Point::Shido, value.toInt());
 			result = true;
 			break;
 
@@ -467,8 +467,8 @@ std::pair<unsigned, unsigned> TournamentModel::GetTotalScore() const
 
 	for (int i(0); i < m_nRows; ++i)
 	{
-		score1 += m_pTournamentRound->at(i).GetScorePoints(Ipponboard::FighterEnum::First);
-		score2 += m_pTournamentRound->at(i).GetScorePoints(Ipponboard::FighterEnum::Second);
+		score1 += m_pTournamentRound->at(i).GetScoreValue(Ipponboard::FighterEnum::First);
+		score2 += m_pTournamentRound->at(i).GetScoreValue(Ipponboard::FighterEnum::Second);
 	}
 
 	return std::make_pair(score1, score2);

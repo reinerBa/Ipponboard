@@ -12,14 +12,74 @@ using namespace Ipponboard;
 Fight::Fight()
 	: weight("-")
 	, rules(new ClassicRules)
+	, calc()
 {
-	scores[0] = Score();
-	scores[1] = Score();
-
 	fighters[0] = SimpleFighter();
 	fighters[1] = SimpleFighter();
 
-	rules->SetCountSubscores(false);
+	calc = Calculator{ rules->Get() };
+	SetAutoAdjustPoints(false);
+	SetCountSubscores(false);
+	current_score.Clear();
+}
+
+void Fight::AddPoint(FighterEnum whos, Point point)
+{
+	calc.AddPoint(current_score, whos, point);
+}
+
+void Fight::RemovePoint(FighterEnum whos, Point point)
+{
+	calc.RemovePoint(current_score, whos, point);
+}
+
+
+
+bool Fight::IsShidoMatchPoint(FighterEnum whos) const
+{
+	return calc.IsShidoMatchPoint(current_score, whos);
+}
+
+int Fight::CompareScore() const
+{
+	return calc.CompareScore(current_score, IsGoldenScore());
+}
+
+bool Fight::IsLeading(FighterEnum who) const
+{
+	return calc.IsLeading(current_score, who, IsGoldenScore());
+}
+
+void Fight::SetValue(FighterEnum whos, Point point, int value)
+{
+	calc.SetPointValue(current_score, whos, point, value);
+}
+
+bool Fight::IsAwaseteIppon(FighterEnum whos) const
+{
+	return calc.IsAwaseteIppon(current_score, whos);
+}
+
+bool Fight::IsAlmostAwaseteIppon(FighterEnum whos) const
+{
+	return calc.IsAlmostAwaseteIppon(current_score, whos);
+}
+
+void Fight::SetRules(std::shared_ptr<AbstractRules> pRules)
+{
+	rules = pRules;
+	calc = Calculator{ rules->Get() };
+	current_score.Clear();
+}
+
+void Fight::SetAutoAdjustPoints(bool autoAdjust)
+{
+	calc.SetAutoAdjustPoints(autoAdjust);
+}
+
+void Fight::SetCountSubscores(bool countSubscores)
+{
+	calc.SetCountSubscores(countSubscores);
 }
 
 int Fight::GetSecondsElapsed() const
@@ -55,6 +115,16 @@ int Fight::GetGoldenScoreTime() const
 	}
 
 	return 0;
+}
+
+bool Fight::HasWon(FighterEnum who) const
+{
+	return calc.HasWon(current_score, who, IsGoldenScore());
+}
+
+int Fight::GetScoreValue(FighterEnum whos) const
+{
+	return calc.GetScoreValue(current_score, whos, IsGoldenScore());
 }
 
 
@@ -118,68 +188,3 @@ QString Fight::GetTimeRemainingString() const
 			   QString::number(seconds));
 }
 
-bool Fight::HasWon(FighterEnum who) const
-{
-	const FighterEnum other = GetUkeFromTori(who);
-
-	auto result = rules->CompareScore(*this);
-
-	if (who == FighterEnum::First && result < 0 || who == FighterEnum::Second && result > 0)
-	{
-		return true;
-	}
-
-	return false;
-}
-
-int Fight::GetScorePoints(FighterEnum who) const
-{
-	const FighterEnum other = GetUkeFromTori(who);
-
-	if (HasWon(who))
-	{
-		if (GetScore(who).Ippon() || rules->IsAwaseteIppon(GetScore(who)))
-		{
-			return eScore_Ippon;
-		}
-
-		// Only the fight deciding point is taken into account!
-		if (GetScore(who).Wazaari() > 0 && GetScore(who).Wazaari() > GetScore(other).Wazaari())
-		{
-			return eScore_Wazaari;
-		}
-
-		if (GetScore(who).Yuko() > GetScore(other).Yuko())
-		{
-			return eScore_Yuko;
-		}
-
-		if ((!rules->IsOption_ShidoAddsPoint() || IsGoldenScore()) && GetScore(who).Shido() < GetScore(other).Shido())
-		{
-			return eScore_Shido;
-		}
-
-		//TODO: Hantei!
-	}
-	else
-	{
-		if (!HasWon(other))
-		{
-			return eScore_Hikewake;
-		}
-		else if (rules->IsOption_CountSubscores())
-		{
-			// Special rule for Jugendliga
-			if (GetScore(who).Wazaari() > GetScore(other).Wazaari())
-			{
-				return eScore_Wazaari;
-			}
-			else if (GetScore(who).Yuko() > GetScore(other).Yuko())
-			{
-				return eScore_Yuko;
-			}
-		}
-	}
-
-	return eScore_Lost;
-}

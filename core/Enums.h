@@ -7,7 +7,7 @@
 namespace Ipponboard
 {
 
-enum  FighterEnum
+enum FighterEnum
 {
 	None = -1,
 	First = 0,
@@ -15,9 +15,9 @@ enum  FighterEnum
 	_MAX
 };
 
-inline FighterEnum GetUkeFromTori(FighterEnum tori)
+inline FighterEnum OtherFighter(FighterEnum f)
 {
-	return (tori == FighterEnum::First) ? FighterEnum::Second : FighterEnum::First;
+	return (f == FighterEnum::First) ? FighterEnum::Second : FighterEnum::First;
 }
 
 enum EAction
@@ -65,6 +65,16 @@ enum EOption
 	//eOption_AutoAdjustPoints = 0,
 	eOption_AllSubscoresCount = 2,
 	eOption_MAX
+};
+
+enum class Point
+{
+	Ippon = 0,
+	Wazaari,
+	Yuko,
+	Shido,
+	Hansokumake,
+	_MAX
 };
 
 }

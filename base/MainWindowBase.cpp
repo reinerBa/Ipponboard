@@ -31,7 +31,6 @@
 
 using namespace FMlib;
 using namespace Ipponboard;
-using Point = Score::Point;
 
 MainWindowBase::MainWindowBase(QWidget* parent)
 	: QMainWindow(parent)
@@ -879,14 +878,14 @@ void MainWindowBase::EvaluateInput()
 	// hansokumake fighter1
 	else if (m_pGamepad->WasPressed(Gamepad::EButton(m_controllerCfg.button_hansokumake_first)))
 	{
-		const bool revoke(m_pController->GetScore(
+		const bool revoke(m_pController->GetScoreValue(
 							  FighterEnum::First, Point::Hansokumake) != 0);
 		m_pController->DoAction(eAction_Hansokumake, FighterEnum::First, revoke);
 	}
 	// hansokumake fighter2
 	else if (m_pGamepad->WasPressed(Gamepad::EButton(m_controllerCfg.button_hansokumake_second)))
 	{
-		const bool revoke(m_pController->GetScore(
+		const bool revoke(m_pController->GetScoreValue(
 							  FighterEnum::Second, Point::Hansokumake) != 0);
 		m_pController->DoAction(eAction_Hansokumake, FighterEnum::Second, revoke);
 

@@ -1,6 +1,7 @@
 ﻿#include "View.h"
 #include "ui_view_horizontal.h"
 #include "../core/Rules.h"
+#include "../core/Fight.h"
 
 #include <QPainter>
 #include <QMessageBox>
@@ -11,7 +12,6 @@
 #include <QInputDialog>
 
 using namespace Ipponboard;
-using Point = Score::Point;
 
 //=========================================================
 View::View(IController* pController, EditionType edition, EType type, QWidget* parent)
@@ -165,7 +165,8 @@ void View::UpdateView()
 {
 	Q_ASSERT(m_pController && "Controller not set!");
 
-	if (m_pController->GetRules()->GetMaxShidoCount() < 3)
+	// display/hide 3rd shido
+	if (m_pController->CurrentMatch().GetRuleSet().MaxShidoCount < 3)
 	{
 		ui->image_shido3_first->hide();
 		ui->image_shido3_second->hide();
@@ -176,7 +177,8 @@ void View::UpdateView()
 		ui->image_shido3_second->show();
 	}
 
-	if (m_pController->GetRules()->IsOption_HasYuko())
+	// display/hide Yuko
+	if (m_pController->CurrentMatch().GetRuleSet().HasYuko)
 	{
 		ui->text_yuko_first->show();
 		ui->text_yuko_second->show();
@@ -712,7 +714,7 @@ void View::update_ippon(Ipponboard::FighterEnum who) const
 		uke = FighterEnum::First;
 	}
 
-	const int score = m_pController->GetScore(GVF_(who), Point::Ippon);
+	const int score = m_pController->GetScoreValue(GVF_(who), Point::Ippon);
 
 	if (score != 0)
 	{
@@ -729,7 +731,7 @@ void View::update_ippon(Ipponboard::FighterEnum who) const
 				digit_wazaari->hide();
 				wazaariLabel->SetText("");
 
-				if (m_pController->GetRules()->IsOption_HasYuko())
+				if (m_pController->CurrentMatch().GetRuleSet().HasYuko)
 				{
 					digit_yuko->hide();
 					yukoLabel->SetText("");
@@ -741,7 +743,7 @@ void View::update_ippon(Ipponboard::FighterEnum who) const
 				digit_wazaari->show();
 				wazaariLabel->SetText("Waza-ari");
 
-				if (m_pController->GetRules()->IsOption_HasYuko())
+				if (m_pController->CurrentMatch().GetRuleSet().HasYuko)
 				{
 					digit_yuko->show();
 					yukoLabel->SetText("Yuko");
@@ -754,7 +756,7 @@ void View::update_ippon(Ipponboard::FighterEnum who) const
 			digit_wazaari->show();
 			wazaariLabel->SetText("W");
 
-			if (m_pController->GetRules()->IsOption_HasYuko())
+			if (m_pController->CurrentMatch().GetRuleSet().HasYuko)
 			{
 				digit_yuko->show();
 				yukoLabel->SetText("Y");
@@ -765,7 +767,7 @@ void View::update_ippon(Ipponboard::FighterEnum who) const
 	}
 	else
 	{
-		const int score_uke = m_pController->GetScore(GVF_(uke), Point::Ippon);
+		const int score_uke = m_pController->GetScoreValue(GVF_(uke), Point::Ippon);
 
 		if (m_pBlinkTimer->isActive() &&  0 == score_uke)
 		{
@@ -780,7 +782,7 @@ void View::update_ippon(Ipponboard::FighterEnum who) const
 			digit_wazaari->show();
 			wazaariLabel->SetText("W");
 
-			if (m_pController->GetRules()->IsOption_HasYuko())
+			if (m_pController->CurrentMatch().GetRuleSet().HasYuko)
 			{
 				digit_yuko->show();
 				yukoLabel->SetText("Y");
@@ -794,7 +796,7 @@ void View::update_ippon(Ipponboard::FighterEnum who) const
 			digit_wazaari->show();
 			wazaariLabel->SetText("Waza-ari");
 
-			if (m_pController->GetRules()->IsOption_HasYuko())
+			if (m_pController->CurrentMatch().GetRuleSet().HasYuko)
 			{
 				digit_yuko->show();
 				yukoLabel->SetText("Yuko");
@@ -814,7 +816,7 @@ void View::update_wazaari(Ipponboard::FighterEnum who) const
 	if (FighterEnum::Second == who)
 		digit = ui->text_wazaari_second;
 
-	const int score = m_pController->GetScore(GVF_(who), Point::Wazaari);
+	const int score = m_pController->GetScoreValue(GVF_(who), Point::Wazaari);
 	//digit->setDigitCount( score > 9 ? 2 : 1 );
 	digit->SetText(QString::number(score), ScaledText::eSize_full);
 }
@@ -828,7 +830,7 @@ void View::update_yuko(Ipponboard::FighterEnum who) const
 	if (FighterEnum::Second == who)
 		digit = ui->text_yuko_second;
 
-	const int score = m_pController->GetScore(GVF_(who), Point::Yuko);
+	const int score = m_pController->GetScoreValue(GVF_(who), Point::Yuko);
 	digit->SetText(QString::number(score), ScaledText::eSize_full);
 }
 
@@ -853,7 +855,7 @@ void View::update_shido(Ipponboard::FighterEnum who) const
 		pImage3 = ui->image_shido3_second;
 	}
 
-	const int score = m_pController->GetScore(GVF_(who), Point::Shido);
+	const int score = m_pController->GetScoreValue(GVF_(who), Point::Shido);
 	const auto imageOn = ":res/images/on.png";
 	const auto imageOff = ":res/images/off.png";
 	const auto imageEmpty = ":res/images/off_empty.png";
@@ -874,10 +876,11 @@ void View::update_hansokumake(Ipponboard::FighterEnum who) const
 		pImage = ui->image_hansokumake_second;
 	}
 
-	const int score_hansokumake = m_pController->GetScore(GVF_(who), Point::Hansokumake);
-	const int score_shido = m_pController->GetScore(GVF_(who), Point::Shido);
+	const int score_hansokumake = m_pController->GetScoreValue(GVF_(who), Point::Hansokumake);
+	const int score_shido = m_pController->GetScoreValue(GVF_(who), Point::Shido);
 
-	if (score_hansokumake > 0 || score_shido == m_pController->GetRules()->GetMaxShidoCount() + 1)
+	if (score_hansokumake > 0
+			|| score_shido == m_pController->CurrentMatch().GetRuleSet().MaxShidoCount + 1)
 	{
 		pImage->UpdateImage(":res/images/on_hansokumake.png");
 	}

@@ -55,7 +55,7 @@ public:
 	void InitTournament(TournamentMode const& mode);
 	void RegisterView(IView* pView);
 	void RegisterView(IGoldenScoreView* pView);
-	int GetScore(Ipponboard::FighterEnum whos, Ipponboard::Score::Point point) const;
+	int GetScoreValue(Ipponboard::FighterEnum whos, Ipponboard::Point point) const;
 	void DoAction(Ipponboard::EAction action, Ipponboard::FighterEnum who = Ipponboard::FighterEnum::First, bool doRevoke = false);
 	Ipponboard::EState GetCurrentState() const { return m_State; }
 	Ipponboard::FighterEnum GetLead() const;
@@ -80,7 +80,8 @@ public:
 	void SetGoldenScore(bool isGS);
 	bool IsGoldenScore() const { return is_golden_score(); }
 	void SetRules(std::shared_ptr<AbstractRules> rules);
-	virtual std::shared_ptr<AbstractRules> GetRules() const override;
+	Fight& CurrentMatch() override;
+	Fight const& CurrentMatch() const;
 	bool IsAutoAdjustPoints() const final;
 	void SetAutoAdjustPoints(bool isActive) final;
 	void SetOption(Ipponboard::EOption option, bool isSet);
@@ -101,8 +102,6 @@ private:
 	void save_fight() final;
 	void reset_fight() final;
 	void reset_timer(ETimer) final;
-	Score& get_score(Ipponboard::FighterEnum who) final;
-	Score const& get_score(Ipponboard::FighterEnum who) const final;
 	int get_time(ETimer) const final;
 	bool is_sonomama() const final;
 	bool is_golden_score() const final;
@@ -127,7 +126,7 @@ public:
 
 	int GetCurrentFight() const
 	{
-		return m_currentFight;
+		return m_currentFightNo;
 	}
 
 	void SetCurrentRound(unsigned int index);
@@ -142,10 +141,11 @@ public:
 	void SetFight(unsigned int tournament_index, unsigned int fight_index,
 				  const QString& weight, const QString& first_player_name,
 				  const QString& first_player_club, const QString& second_player_name,
-				  const QString& second_player_club, int yuko1 = -1,
-				  int wazaari1 = -1, int ippon1 = -1, int shido1 = -1,
-				  int hansokumake1 = -1, int yuko2 = -1, int wazaari2 = -1,
-				  int ippon2 = -1, int shido2 = -1, int hansokumake2 = -1);
+				  const QString& second_player_club, int yuko1 = 0,
+				  int wazaari1 = 0, int ippon1 = 0, int shido1 = 0,
+				  int hansokumake1 = 0, int yuko2 = 0, int wazaari2 = 0,
+				  int ippon2 = 0, int shido2 = 0, int hansokumake2 = 0);
+
 	Ipponboard::Fight const& GetFight(unsigned int tournament_index, unsigned int fight_index) const;
 	void SetFighterName(Ipponboard::FighterEnum whos, const QString& name);
 
@@ -161,35 +161,25 @@ private slots:
 	void update_hold_time();
 
 private:
-	//	void AddPoint_( Ipponboard::FighterEnum whos, Ipponboard::Score::Point point );
-	//	void RemovePoint_( Ipponboard::FighterEnum whos, Ipponboard::Score::Point point );
-	//	void StartStopTimer_( Ipponboard::ETimer timer );
-	//	void UpdatePointsFromHoldTimer_();
-	//	void CorrectState_();
 	void update_views() const;
-	//	bool IsTimeLeft_() const
-	//	{
-	//		return  *m_pTimeMain > QTime(0,0,1) &&
-	//				*m_pTimeMain < QTime(23,0,0);
-	//	}
 	void reset();
 	void reset_timer_value(Ipponboard::ETimer timer);
 
 	inline Ipponboard::Fight& current_fight()
 	{
-		return m_Tournament.at(m_currentRound)->at(m_currentFight);
+		return m_Tournament.at(m_currentRound)->at(m_currentFightNo);
 	}
 
 	inline Ipponboard::Fight const& current_fight() const
 	{
-		return m_Tournament.at(m_currentRound)->at(m_currentFight);
+		return m_Tournament.at(m_currentRound)->at(m_currentFightNo);
 	}
 
 	Ipponboard::TournamentMode m_mode;
 	Ipponboard::Tournament m_Tournament;
 	std::vector<std::shared_ptr<TournamentModel> > m_TournamentModels;
 	int m_currentRound;
-	int m_currentFight;
+	int m_currentFightNo;
 
 	Ipponboard::IpponboardSM* m_pSM;
 	Ipponboard::EState m_State;
@@ -207,10 +197,12 @@ private:
 	QString m_weight_class;
 	std::bitset<eOption_MAX> m_options;
 	bool m_isAutoAdjustPoints { true };
+	bool m_isCountSubscores { false };
 	QString m_labelHome;
 	QString m_labelGuest;
 	void reset_timers();
 	std::shared_ptr<AbstractRules> m_rules;
+	Calculator m_calc;
 };
 } // namespace Ipponboard
 

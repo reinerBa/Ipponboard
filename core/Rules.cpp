@@ -1,4 +1,5 @@
 #include "Rules.h"
+#include "RuleSet.h"
 #include "Fight.h"
 
 using namespace Ipponboard;
@@ -10,68 +11,114 @@ const char* const Rules2013::StaticName = "IJF-2013";
 const char* const ClassicRules::StaticName = "Classic";
 
 AbstractRules::AbstractRules()
-{}
-
-int Ipponboard::AbstractRules::CompareScore(const Fight& f) const
 {
-	using Point = Score::Point;
+}
 
-	auto lhs = f.GetScore(FighterEnum::First);
-	auto rhs = f.GetScore(FighterEnum::Second);
 
-	if (lhs.Value(Point::Hansokumake) < rhs.Value(Point::Hansokumake))
+ClassicRules::ClassicRules()
+{
+	_options.Name = ClassicRules::StaticName;
+	_options.GoldenScoreIsOpenEnd = false;
+	_options.ShidoAddsPoint = true;
+
+	//TODO: assure those (via tests)
+	//		_options.OsaekomiValue_Ippon = 25;
+	//		_options.OsaekomiValue_Wazaari = 20;
+	//		_options.OsaekomiValue_Yuko = 15;
+}
+
+Rules2013::Rules2013()
+{
+	_options.Name = Rules2013::StaticName;
+	_options.OsaekomiValue_Ippon = 20;
+	_options.OsaekomiValue_Wazaari = 15;
+	_options.OsaekomiValue_Yuko = 10;
+}
+
+Rules2017::Rules2017()
+{
+	_options.Name = Rules2017::StaticName;
+	_options.ShidoScoreCounts = false;
+	_options.HasYuko = false;
+	_options.AwaseteIppon = false;
+	_options.MaxShidoCount = 2;
+	_options.MaxWazaariCount = 999;
+	_options.OsaekomiValue_Ippon = 20;
+	_options.OsaekomiValue_Wazaari = 10;
+	_options.OsaekomiValue_Yuko = -1;
+}
+
+Rules2017U15::Rules2017U15()
+{
+	_options.Name = Rules2017U15::StaticName;
+	_options.ShidoScoreCounts = false;
+	_options.HasYuko = false;
+	_options.AwaseteIppon = false;
+	_options.MaxShidoCount = 3;
+	_options.MaxWazaariCount = 999;
+	_options.OsaekomiValue_Ippon = 20;
+	_options.OsaekomiValue_Wazaari = 10;
+	_options.OsaekomiValue_Yuko = -1;
+}
+
+Rules2018::Rules2018()
+{
+	_options.Name = Rules2018::StaticName;
+	_options.ShidoScoreCounts = false;
+	_options.HasYuko = false;
+	_options.AwaseteIppon = true; // important
+	_options.MaxShidoCount = 2;
+	_options.MaxWazaariCount = 2; // Important
+	_options.OsaekomiValue_Ippon = 20;
+	_options.OsaekomiValue_Wazaari = 10;
+	_options.OsaekomiValue_Yuko = -1;
+}
+
+std::shared_ptr<AbstractRules> RulesFactory::Create(QString name)
+{
+	if (name == ClassicRules::StaticName)
 	{
-		return -1;
+		return std::make_shared<ClassicRules>();
 	}
 
-	if ((lhs.Value(Point::Hansokumake) > rhs.Value(Point::Hansokumake)))
+	if (name == Rules2013::StaticName)
 	{
-		return 1;
+		return std::make_shared<Rules2013>();
 	}
 
-	if (lhs.Value(Point::Ippon) > rhs.Value(Point::Ippon))
+	if (name == Rules2017U15::StaticName)
 	{
-		return -1;
+		return std::make_shared<Rules2017U15>();
 	}
 
-	if (lhs.Value(Point::Ippon) < rhs.Value(Point::Ippon))
+	if (name == Rules2017::StaticName)
 	{
-		return 1;
+		return std::make_shared<Rules2017>();
 	}
 
-	if (lhs.Value(Point::Wazaari) > rhs.Value(Point::Wazaari))
+	if (name == Rules2018::StaticName)
 	{
-		return -1;
+		return std::make_shared<Rules2018>();
 	}
 
-	if (lhs.Value(Point::Wazaari) < rhs.Value(Point::Wazaari))
-	{
-		return 1;
-	}
+	// default
+	return std::make_shared<Rules2018>();
+}
 
-	if (lhs.Value(Point::Yuko) > rhs.Value(Point::Yuko))
-	{
-		return -1;
-	}
+QStringList RulesFactory::GetNames()
+{
+	auto result = QStringList();
 
-	if (lhs.Value(Point::Yuko) < rhs.Value(Point::Yuko))
-	{
-		return 1;
-	}
+	result.push_back(Rules2018::StaticName);
+	result.push_back(Rules2017::StaticName);
+	result.push_back(Rules2017U15::StaticName);
+	result.push_back(Rules2013::StaticName);
+	result.push_back(ClassicRules::StaticName);
 
-	// shidos are not compared as they result in concrete points
-	if (!IsOption_ShidoAddsPoint() && (IsOption_ShidoScoreCounts() || f.IsGoldenScore()))
-	{
-		if (lhs.Value(Point::Shido) < rhs.Value(Point::Shido))
-		{
-			return -1;
-		}
+	return result;
+}
 
-		if (lhs.Value(Point::Shido) > rhs.Value(Point::Shido))
-		{
-			return 1;
-		}
-	}
-
-	return 0;
+QString RulesFactory::GetDefaultName()
+{
+	return Rules2018::StaticName;
 }

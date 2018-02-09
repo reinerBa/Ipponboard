@@ -177,7 +177,7 @@ void MainWindowTeam::Init()
 
 void MainWindowTeam::UpdateGoldenScoreView()
 {
-	m_pUi->button_golden_score->setEnabled(m_pController->GetRules()->IsOption_OpenEndGoldenScore());
+	m_pUi->button_golden_score->setEnabled(m_pController->CurrentMatch().GetRuleSet().GoldenScoreIsOpenEnd);
 	m_pUi->button_golden_score->setChecked(m_pController->IsGoldenScore());
 }
 
@@ -525,31 +525,30 @@ QString MainWindowTeam::GetRoundDataAsHtml(const Fight& fight, int fightNo)
 		return !fight.is_saved ? QString() : timeStr;
 	};
 
-	auto first = FighterEnum::First;
-	auto second = FighterEnum::Second;
-	auto const& score_first = fight.GetScore1();
-	auto const& score_second = fight.GetScore2();
+	auto const first = FighterEnum::First;
+	auto const second = FighterEnum::Second;
+	auto const& score = fight.GetScore();
 
 	QString roundData("<tr>");
 
 	roundData.append("<td><center>" + QString::number(fightNo + 1) + "</center></td>"); // number
 	roundData.append("<td><center>" + fight.weight + "</center></td>"); // weight
 	roundData.append("<td><center>" + fight.fighters[first].name + "</center></td>"); // name
-	roundData.append("<td><center>" + getNum(score_first.Ippon()) + "</center></td>"); // I
-	roundData.append("<td><center>" + getNum(score_first.Wazaari()) + "</center></td>"); // W
-	roundData.append("<td><center>" + getNum(score_first.Yuko()) + "</center></td>"); // Y
-	roundData.append("<td><center>" + getNum(score_first.Shido()) + "</center></td>"); // S
-	roundData.append("<td><center>" + getNum(score_first.Hansokumake()) + "</center></td>"); // H
+	roundData.append("<td><center>" + getNum(score.Ippons(first)) + "</center></td>"); // I
+	roundData.append("<td><center>" + getNum(score.Wazaari(first)) + "</center></td>"); // W
+	roundData.append("<td><center>" + getNum(score.Yuko(first)) + "</center></td>"); // Y
+	roundData.append("<td><center>" + getNum(score.Shido(first)) + "</center></td>"); // S
+	roundData.append("<td><center>" + getNum(score.Hansokumake(first)) + "</center></td>"); // H
 	roundData.append("<td><center>" + getNum(fight.HasWon(first)) + "</center></td>"); // won
-	roundData.append("<td><center>" + getNum(fight.GetScorePoints(first)) + "</center></td>"); // score
+	roundData.append("<td><center>" + getNum(fight.GetScoreValue(first)) + "</center></td>"); // score
 	roundData.append("<td><center>" + fight.fighters[second].name + "</center></td>"); // name
-	roundData.append("<td><center>" + getNum(score_second.Ippon()) + "</center></td>"); // I
-	roundData.append("<td><center>" + getNum(score_second.Wazaari()) + "</center></td>"); // W
-	roundData.append("<td><center>" + getNum(score_second.Yuko()) + "</center></td>"); // Y
-	roundData.append("<td><center>" + getNum(score_second.Shido()) + "</center></td>"); // S
-	roundData.append("<td><center>" + getNum(score_second.Hansokumake()) + "</center></td>"); // H
+	roundData.append("<td><center>" + getNum(score.Ippons(second)) + "</center></td>"); // I
+	roundData.append("<td><center>" + getNum(score.Wazaari(second)) + "</center></td>"); // W
+	roundData.append("<td><center>" + getNum(score.Yuko(second)) + "</center></td>"); // Y
+	roundData.append("<td><center>" + getNum(score.Shido(second)) + "</center></td>"); // S
+	roundData.append("<td><center>" + getNum(score.Hansokumake(second)) + "</center></td>"); // H
 	roundData.append("<td><center>" + getNum(fight.HasWon(second)) + "</center></td>"); // won
-	roundData.append("<td><center>" + getNum(fight.GetScorePoints(second)) + "</center></td>"); // score
+	roundData.append("<td><center>" + getNum(fight.GetScoreValue(second)) + "</center></td>"); // score
 	roundData.append("<td><center>" + getTime(fight.GetTimeRemainingString()) + "</center></td>"); // time
 	roundData.append("<td><center>" + getTime(fight.GetTotalTimeElapsedString()) + "</center></td>"); // time
 	roundData.append("</tr>\n");

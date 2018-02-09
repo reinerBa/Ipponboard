@@ -7,7 +7,7 @@
 #include <iostream>
 
 using namespace Ipponboard;
-using Point = Score::Point;
+using Point = Point;
 
 TEST_CASE("Rulesfactory creates correct rule object")
 {

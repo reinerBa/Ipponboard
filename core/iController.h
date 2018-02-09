@@ -1,10 +1,11 @@
 #ifndef BASE__ICONTROLLER_H_
 #define BASE__ICONTROLLER_H_
 
-#include <QString>
 #include "Enums.h"
 #include "Score.h"
 
+#include <QString>
+#include <memory>
 
 namespace Ipponboard
 {
@@ -13,13 +14,14 @@ namespace Ipponboard
 class IView;
 class IGoldenScoreView;
 class AbstractRules;
+class Fight;
 
 class IController
 {
 public:
 	virtual void RegisterView(IView* pView) = 0;
 	virtual void RegisterView(IGoldenScoreView* pView) = 0;
-	virtual int GetScore(Ipponboard::FighterEnum whos, Ipponboard::Score::Point point) const = 0;
+	virtual int GetScoreValue(Ipponboard::FighterEnum whos, Ipponboard::Point point) const = 0;
 	virtual void DoAction(Ipponboard::EAction action, Ipponboard::FighterEnum who = Ipponboard::FighterEnum::First, bool doRevoke = false) = 0;
 	virtual Ipponboard::EState GetCurrentState() const	= 0;
 	virtual Ipponboard::FighterEnum GetLead() const = 0;
@@ -39,7 +41,8 @@ public:
 	virtual QString const& GetCategoryName() const = 0;
 	virtual void SetGoldenScore(bool isGS) = 0;
 	virtual bool IsGoldenScore() const = 0;
-	virtual std::shared_ptr<AbstractRules> GetRules() const = 0;
+	//virtual std::shared_ptr<AbstractRules> GetRules() const = 0;
+	virtual Fight& CurrentMatch() = 0;
 	virtual void SetRules(std::shared_ptr<AbstractRules> rules) = 0;
 	virtual bool IsAutoAdjustPoints() const = 0;
 	virtual void SetAutoAdjustPoints(bool isActive) = 0;

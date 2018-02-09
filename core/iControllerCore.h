@@ -1,9 +1,11 @@
 ﻿#ifndef BASE__ICONTROLLERCORE_H_
 #define BASE__ICONTROLLERCORE_H_
 
-#include <QString>
 #include "Enums.h"
 #include "Score.h"
+
+#include <QString>
+#include <memory>
 
 
 namespace Ipponboard
@@ -11,6 +13,7 @@ namespace Ipponboard
 
 // forwards
 class IView;
+class Fight;
 
 class IControllerCore
 {
@@ -23,14 +26,12 @@ private:
 	virtual void save_fight() = 0;
 	virtual void reset_fight() = 0;
 	virtual void reset_timer(ETimer) = 0;
-	virtual Score& get_score(Ipponboard::FighterEnum who) = 0;
-	virtual Score const& get_score(Ipponboard::FighterEnum who) const = 0;
 	virtual int get_time(ETimer) const = 0;
 	virtual bool is_sonomama() const = 0;
 	virtual bool is_golden_score() const = 0;
 	virtual bool is_option(Ipponboard::EOption option) const = 0;
 	virtual bool is_auto_adjust() const = 0;
-	virtual std::shared_ptr<AbstractRules> GetRules() const = 0;
+	virtual Fight& CurrentMatch() = 0;
 };
 
 }

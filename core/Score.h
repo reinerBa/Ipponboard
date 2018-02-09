@@ -1,53 +1,38 @@
-#ifndef BASE__SCORE_H_
-#define BASE__SCORE_H_
+#pragma once
 
 #include "Enums.h"
 
-#include <memory>
-
 namespace Ipponboard
 {
-class AbstractRules;
 
 class Score
 {
 public:
-
-	enum class Point
-	{
-		Ippon = 0,
-		Wazaari,
-		Yuko,
-		Shido,
-		Hansokumake,
-		_MAX
-	};
-
 	Score()
 	{
 		Clear();
 	}
 
-	Score& Add(Point point);
-	Score& Remove(Point point);
-	Score& SetValue(Point point, int value);
-	int Value(Point point) const { return _points[static_cast<int>(point)]; }
-
-	// convenience functions
-	bool Ippon() const { return Value(Point::Ippon) != 0; }
-	int Wazaari() const { return Value(Point::Wazaari); }
-	int Yuko() const { return Value(Point::Yuko); }
-	int Shido() const { return Value(Point::Shido); }
-	bool Hansokumake() const { return Value(Point::Hansokumake) != 0; }
 	void Clear();
 
-protected:
-	virtual void correct_point(Point p);
+	int GetValue(FighterEnum whos, Point point) const;
+	void SetValue(FighterEnum whos, Point point, int value);
+	void Increment(FighterEnum whos, Point point);
+	void Decrement(FighterEnum whos, Point point);
+
+	// convenience functions
+	int Ippons(FighterEnum whos) const;
+	int Wazaari(FighterEnum whos) const;
+	int Yuko(FighterEnum whos) const;
+	int Shido(FighterEnum whos) const;
+
+	bool Hansokumake(FighterEnum whos) const;
 
 private:
-	void correct_points();
-
-	int _points[static_cast<int>(Point::_MAX)];
+	int* data(FighterEnum whos);
+	int const* data(FighterEnum whos) const;
+	int values1[static_cast<int>(Point::_MAX)];
+	int values2[static_cast<int>(Point::_MAX)];
 };
+
 } // namespace ipponboard
-#endif  // BASE__SCORE_H_

@@ -5,6 +5,7 @@
 // IT MAY NOT BE DISTRIBUTED TO OR SHARED WITH THE PUBLIC IN ANY FORM!
 //
 #include "FighterManager.h"
+#include "../core/Fighter.h"
 #include "../util/SimpleCsvFile.hpp"
 
 #include <QObject>  // needed for tr()
@@ -174,7 +175,7 @@ bool FighterManager::ImportFighters(
 		fighter.weight = weight;
 		fighter.category = category;
 
-		m_fighters.insert(fighter);
+		m_fighters.emplace(std::move(fighter));
 	}
 
 	errorMsg = QObject::tr("Imported %1 new fighters.").arg(QString::number(m_fighters.size() - oldCount));
@@ -217,7 +218,7 @@ bool FighterManager::ExportFighters(
 
 	QStringList data;
 
-	for (Ipponboard::Fighter const & f : m_fighters)
+	for (auto const & f : m_fighters)
 	{
 		QString line;
 
@@ -282,22 +283,22 @@ bool FighterManager::RemoveFighter(Fighter f)
 		return false;
 	}
 
-	m_fighters.erase(iter);
+		m_fighters.erase(iter);
 
-	return true;
+		return true;	
 }
 
 QStringList FighterManager::GetClubFighterNames(const QString& club) const
 {
 	QStringList ret;
-	std::for_each(begin(m_fighters), end(m_fighters),
-				  [&](Ipponboard::Fighter const & f)
+
+	for (auto const& f : m_fighters)
 	{
 		if (f.club == club)
 		{
 			ret.append(QString("%1 %2").arg(f.first_name, f.last_name));
 		}
-	});
+	}
 
 	return ret;
 }

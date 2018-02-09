@@ -152,7 +152,7 @@ void MainWindow::on_checkBox_golden_score_clicked(bool checked)
 
 	if (checked)
 	{
-		if (m_pController->GetRules()->IsOption_OpenEndGoldenScore())
+		if (m_pController->CurrentMatch().GetRuleSet().GoldenScoreIsOpenEnd)
 		{
 			m_pController->SetRoundTime(QTime());
 		}
@@ -295,30 +295,30 @@ void MainWindow::ui_check_language_items()
 
 void MainWindow::ui_check_rules_items()
 {
-	auto rules = m_pController->GetRules();
-	m_pUi->actionRulesClassic->setChecked(rules->IsOfType<ClassicRules>());
-	m_pUi->actionRules2013->setChecked(rules->IsOfType<Rules2013>());
-	m_pUi->actionRules2017->setChecked(rules->IsOfType<Rules2017>());
-	m_pUi->actionRules2017U15->setChecked(rules->IsOfType<Rules2017U15>());
-	m_pUi->actionRules2018->setChecked(rules->IsOfType<Rules2018>());
+	auto const& rules = m_pController->CurrentMatch().GetRuleSet();
+	m_pUi->actionRulesClassic->setChecked(rules.Name == ClassicRules::StaticName);
+	m_pUi->actionRules2013->setChecked(rules.Name == Rules2013::StaticName);
+	m_pUi->actionRules2017->setChecked(rules.Name == Rules2017::StaticName);
+	m_pUi->actionRules2017U15->setChecked(rules.Name == Rules2017U15::StaticName);
+	m_pUi->actionRules2018->setChecked(rules.Name == Rules2018::StaticName);
 
-	if (rules->IsOfType<ClassicRules>())
+	if (rules.Name == ClassicRules::StaticName)
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRulesClassic->text());
 	}
-	else if (rules->IsOfType<Rules2013>())
+	else if (rules.Name == Rules2013::StaticName)
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2013->text());
 	}
-	else if (rules->IsOfType<Rules2017>())
+	else if (rules.Name == Rules2017::StaticName)
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2017->text());
 	}
-	else if (rules->IsOfType<Rules2017U15>())
+	else if (rules.Name == Rules2017U15::StaticName)
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2017U15->text());
 	}
-	else if (rules->IsOfType<Rules2018>())
+	else if (rules.Name == Rules2018::StaticName)
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2018->text());
 	}
@@ -397,7 +397,7 @@ void MainWindow::write_specific_settings(QSettings& settings)
 	{
 		settings.remove("");
 		settings.setValue(str_tag_MatLabel, m_MatLabel);
-		settings.setValue(str_tag_rules, m_pController->GetRules()->Name());
+		settings.setValue(str_tag_rules, m_pController->CurrentMatch().GetRuleSet().Name);
 	}
 	settings.endGroup();
 }
@@ -419,6 +419,6 @@ void MainWindow::read_specific_settings(QSettings& settings)
 
 void MainWindow::UpdateGoldenScoreView()
 {
-	m_pUi->checkBox_golden_score->setEnabled(m_pController->GetRules()->IsOption_OpenEndGoldenScore());
+	m_pUi->checkBox_golden_score->setEnabled(m_pController->CurrentMatch().GetRuleSet().GoldenScoreIsOpenEnd);
 	m_pUi->checkBox_golden_score->setChecked(m_pController->IsGoldenScore());
 }

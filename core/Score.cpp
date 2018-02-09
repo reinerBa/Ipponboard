@@ -1,111 +1,68 @@
 #include "Score.h"
-#include "Rules.h"
 
 using namespace Ipponboard;
 
-//=========================================================
-Score& Score::Add(Point point)
-//=========================================================
+int Score::GetValue(FighterEnum whos, Point point) const
 {
-	++_points[static_cast<int>(point)];
-
-	correct_points();
-
-	return *this;
+	return data(whos)[static_cast<int>(point)];
 }
 
-//=========================================================
-Score& Score::Remove(Point point)
-//=========================================================
+void Score::SetValue(FighterEnum whos, Point point, int value)
 {
-	--_points[static_cast<int>(point)];
-
-	correct_points();
-
-	return *this;
+	data(whos)[static_cast<int>(point)] = value;
 }
 
-//=========================================================
-Score& Score::SetValue(Ipponboard::Score::Point point, int value)
-//=========================================================
-{
-	if (value >= 0)
-	{
-		_points[static_cast<int>(point)] = value;
-
-		correct_points();
-	}
-
-	return *this;
-}
-
-//=========================================================
 void Score::Clear()
-//=========================================================
 {
 	for (auto i = 0; i < static_cast<int>(Point::_MAX); ++i)
 	{
-		_points[i] = 0;
+		values1[i] = 0;
+		values2[i] = 0;
 	}
 }
 
-void Score::correct_point(Score::Point p)
+void Score::Increment(FighterEnum whos, Point point)
 {
-	switch (p)
-	{
-	case Point::Ippon:
-		if (Value(Point::Ippon) > 1)
-			_points[static_cast<int>(Point::Ippon)] = 1;
-
-		if (Value(Point::Ippon) < 0)
-			_points[static_cast<int>(Point::Ippon)] = 0;
-
-		break;
-
-	case Point::Wazaari:
-
-		//if (Value(Point::Wazaari) > 2)
-		//    _points[static_cast<int>(Point::Wazaari)] = 2;
-		if (Value(Point::Wazaari) < 0)
-			_points[static_cast<int>(Point::Wazaari)] = 0;
-
-		break;
-
-	case Point::Yuko:
-		if (Value(Point::Yuko) < 0)
-			_points[static_cast<int>(Point::Yuko)] = 0;
-
-		break;
-
-	case Point::Shido:
-		if (Value(Point::Shido) > 4)
-			_points[static_cast<int>(Point::Shido)] = 4;
-
-		if (Value(Point::Shido) < 0)
-			_points[static_cast<int>(Point::Shido)] = 0;
-
-		break;
-
-	case Point::Hansokumake:
-		if (Value(Point::Hansokumake) > 1)
-			_points[static_cast<int>(Point::Hansokumake)] = 1;
-
-		if (Value(Point::Hansokumake) < 0)
-			_points[static_cast<int>(Point::Hansokumake)] = 0;
-
-		break;
-
-	default:
-		break;
-	}
+	data(whos)[static_cast<int>(point)] += 1;
 }
 
-
-void Score::correct_points()
+void Score::Decrement(FighterEnum whos, Point point)
 {
-	correct_point(Point::Ippon);
-	correct_point(Point::Wazaari);
-	correct_point(Point::Yuko);
-	correct_point(Point::Hansokumake);
-	correct_point(Point::Shido);
+	data(whos)[static_cast<int>(point)] -= 1;
 }
+
+int Score::Ippons(FighterEnum whos) const
+{
+	return GetValue(whos, Point::Ippon);
+}
+
+int Score::Wazaari(FighterEnum whos) const
+{
+	return GetValue(whos, Point::Wazaari);
+}
+
+int Score::Yuko(FighterEnum whos) const
+{
+	return GetValue(whos, Point::Yuko);
+}
+
+int Score::Shido(FighterEnum whos) const
+{
+	return GetValue(whos, Point::Shido);
+}
+
+bool Score::Hansokumake(FighterEnum whos) const
+{
+	return GetValue(whos, Point::Hansokumake) != 0;
+}
+
+int *Score::data(FighterEnum whos)
+{
+	return whos == First ? values1 : values2;
+}
+
+const int *Score::data(FighterEnum whos) const
+{
+	return whos == First ? values1 : values2;
+}
+

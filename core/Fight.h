@@ -11,6 +11,8 @@
 #include "Score.h"
 #include "Enums.h"
 #include "Rules.h"
+#include "Calculator.h"
+#include "RuleSet.h"
 
 #include "QString"
 #include <memory>
@@ -25,54 +27,26 @@ struct SimpleFighter
 
 class Fight
 {
-private:
-	enum
-	{
-		eScore_Ippon = 10,
-		eScore_Wazaari = 7,
-		eScore_Yuko = 5,
-		eScore_Hantai = 1,
-		eScore_Shido = 1,
-		eScore_Hikewake = 0,
-		eScore_Lost = 0
-	};
-
-	bool _isGoldenScore { false };
-
 public:
 	Fight();
 
-	Fight(Score const& first, Score const& second) : scores { first, second }
-	{}
-
-	Score const& GetScore1() const
+	Fight(RuleSet const& rules, Score const& score)
+		: calc{ rules }
+		, current_score{ score }
 	{
-		return scores[0];
 	}
 
-	Score& GetScore1()
+	const RuleSet& GetRuleSet() const { return calc.GetRuleSet(); }
+
+	Score const& GetScore() const
 	{
-		return scores[0];
+		return current_score;
 	}
 
-	Score const& GetScore2() const
+	//FIXME: remove write access
+	Score& GetScore()
 	{
-		return scores[1];
-	}
-
-	Score& GetScore2()
-	{
-		return scores[1];
-	}
-
-	Score const& GetScore(FighterEnum fighter) const
-	{
-		return scores[static_cast<int>(fighter)];
-	}
-
-	Score& GetScore(FighterEnum fighter)
-	{
-		return scores[static_cast<int>(fighter)];
+		return current_score;
 	}
 
 	SimpleFighter const& GetFighter(FighterEnum fighter) const
@@ -85,8 +59,20 @@ public:
 		return fighters[static_cast<int>(fighter)];
 	}
 
+	void AddPoint(FighterEnum whos, Ipponboard::Point point);
+	void RemovePoint(FighterEnum whos, Ipponboard::Point point);
+	void SetValue(FighterEnum whos, Ipponboard::Point point, int value);
+	bool IsAwaseteIppon(FighterEnum whos) const;
+	bool IsAlmostAwaseteIppon(FighterEnum whos) const;
+	bool IsShidoMatchPoint(FighterEnum whos) const;
+	int CompareScore() const;
+	bool IsLeading(FighterEnum who) const;
+
 	bool IsGoldenScore() const { return _isGoldenScore; }
 	void SetGoldenScore(bool val) { _isGoldenScore = val; }
+	void SetRules(std::shared_ptr<AbstractRules> pRules);
+	void SetAutoAdjustPoints(bool autoAdjust);
+	void SetCountSubscores(bool countSubscores);
 
 	int GetSecondsElapsed() const;
 	void SetSecondsElapsed(int s);
@@ -96,23 +82,26 @@ public:
 	QString GetTotalTimeElapsedString() const;
 	QString GetTimeRemainingString() const;
 
-private:
-	Score scores[2] { Score(), Score() };
-	int seconds_elapsed { 0 };
-	int round_time_seconds { 0 };
-
 public:
-	SimpleFighter fighters[2];
-	QString weight;
-	bool is_saved { false };
-	std::shared_ptr<AbstractRules> rules; // TODO: this should be removed if possible
-
 	// returns remaining seconds
 	int GetRemainingTime() const;
 	int GetGoldenScoreTime() const;
 	bool HasWon(FighterEnum who) const;
+	int GetScoreValue(FighterEnum whos) const;
 
-	int GetScorePoints(FighterEnum who) const;
+	SimpleFighter fighters[2];
+	QString weight;
+	bool is_saved { false };
+
+private:
+	bool _isGoldenScore { false };
+	Calculator calc;
+	Score current_score;
+	int seconds_elapsed { 0 };
+	int round_time_seconds { 0 };
+	std::shared_ptr<AbstractRules> rules; // TODO: this should be removed if possible
+
+
 };
 } // namespace Ipponboard
 

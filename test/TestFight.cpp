@@ -7,19 +7,21 @@
 #include "../core/Score.cpp"
 #include "../core/Fight.cpp"
 #include "../core/Rules.cpp"
+#include "../core/Calculator.cpp"
 
 using Ipponboard::Fight;
-using Ipponboard::Score;
+using Points = Ipponboard::Score;
 using Ipponboard::FighterEnum;
-using Point = Ipponboard::Score::Point;
+using Point = Ipponboard::Point;
 
 TEST_CASE("Fighter with less Shidos wins if points are equal (rules 2013)")
 {
-	auto score = Score().Add(Point::Yuko).Add(Point::Yuko);
-	auto scoreWithShido = Score(score).Add(Point::Shido);
-	auto scoreWithThreeShido = Score(score).Add(Point::Shido).Add(Point::Shido).Add(Point::Shido);
+	FAIL();
+	/*	auto points = Points().Add(Point::Yuko).Add(Point::Yuko);
+	auto pointsWithShido = Points(score).Add(Point::Shido);
+	auto pointsWithThreeShido = Points(score).Add(Point::Shido).Add(Point::Shido).Add(Point::Shido);
 
-	Fight fight { score, score };
+	Fight fight { points, points };
 	fight.rules = std::make_shared<Ipponboard::Rules2013>();
 
 	auto first = FighterEnum::First;
@@ -28,41 +30,43 @@ TEST_CASE("Fighter with less Shidos wins if points are equal (rules 2013)")
 	REQUIRE_FALSE(fight.HasWon(second));
 	REQUIRE_FALSE(fight.HasWon(first));
 
-	fight.GetScore(first) = scoreWithShido;
-	fight.GetScore(second) = scoreWithShido;
+	fight.GetScore(first) = pointsWithShido;
+	fight.GetScore(second) = pointsWithShido;
 	REQUIRE_FALSE(fight.HasWon(second));
 	REQUIRE_FALSE(fight.HasWon(first));
 
-	fight.GetScore(first) = scoreWithThreeShido;
-	fight.GetScore(second) = scoreWithThreeShido;
+	fight.GetScore(first) = pointsWithThreeShido;
+	fight.GetScore(second) = pointsWithThreeShido;
 	REQUIRE_FALSE(fight.HasWon(second));
 	REQUIRE_FALSE(fight.HasWon(first));
 
-	fight.GetScore(first) = score;
-	fight.GetScore(second) = scoreWithThreeShido;
+	fight.GetScore(first) = points;
+	fight.GetScore(second) = pointsWithThreeShido;
 	REQUIRE_FALSE(fight.HasWon(second));
 	REQUIRE(fight.HasWon(first));
 
-	fight.GetScore(first) = scoreWithShido;
-	fight.GetScore(second) = scoreWithThreeShido;
+	fight.GetScore(first) = pointsWithShido;
+	fight.GetScore(second) = pointsWithThreeShido;
 	REQUIRE_FALSE(fight.HasWon(second));
 	REQUIRE(fight.HasWon(first));
+	*/
 }
 
 TEST_CASE("Validate score points (subscore)")
 {
-	auto first = FighterEnum::First;
+	FAIL();
+	/*auto first = FighterEnum::First;
 	auto second = FighterEnum::Second;
 
-	auto emptyScore = Score();
-	auto shidoScore = Score().Add(Point::Shido);
-	auto yukoScore = Score().Add(Point::Yuko);
-	auto yukoWithShidoScore = Score(yukoScore).Add(Point::Shido);
-	auto twoYukoScore = Score().Add(Point::Yuko).Add(Point::Yuko);
-	auto twoYukoWithShidoScore = Score(twoYukoScore).Add(Point::Shido);
-	auto twoYukoWithTwoShidoScore = Score(twoYukoScore).Add(Point::Shido).Add(Point::Shido);
+	auto emptyScore = Points();
+	auto shidoScore = Points().Add(Point::Shido);
+	auto yukoScore = Points().Add(Point::Yuko);
+	auto yukoWithShidoScore = Points(yukoScore).Add(Point::Shido);
+	auto twoYukoScore = Points().Add(Point::Yuko).Add(Point::Yuko);
+	auto twoYukoWithShidoScore = Points(twoYukoScore).Add(Point::Shido);
+	auto twoYukoWithTwoShidoScore = Points(twoYukoScore).Add(Point::Shido).Add(Point::Shido);
 
-	auto IpponScore = Score().Add(Point::Ippon);
+	auto IpponScore = Points().Add(Point::Ippon);
 
 	Fight f1 { emptyScore, shidoScore };
 	f1.rules = std::make_shared<Ipponboard::Rules2013>();
@@ -89,6 +93,7 @@ TEST_CASE("Validate score points (subscore)")
 	f5.rules = std::make_shared<Ipponboard::Rules2013>();
 	REQUIRE(f5.GetScorePoints(first) == 1);
 	REQUIRE(f5.GetScorePoints(second) == 0);
+	*/
 }
 
 TEST_CASE("TimeRemaining accounts for golden score")
@@ -123,7 +128,8 @@ TEST_CASE("time string with Golden Score is propertly converted")
 
 TEST_CASE("rules2017: score points will return 1 for shido won in golden score only")
 {
-	Fight f;
+	FAIL();
+	/*Fight f;
 	f.rules = std::make_shared<Ipponboard::Rules2017>();
 
 	REQUIRE(f.GetScorePoints(FighterEnum::First) == 0);
@@ -139,12 +145,14 @@ TEST_CASE("rules2017: score points will return 1 for shido won in golden score o
 	f.SetGoldenScore(true);
 	REQUIRE(f.GetScorePoints(FighterEnum::First) == 0);
 	REQUIRE(f.GetScorePoints(FighterEnum::Second) == 1);
+	*/
 }
 
 TEST_CASE("rules2017: no one has won if points are equal and shidos aren't in golden score")
 {
-	auto score1 = Score().Add(Point::Yuko).Add(Point::Shido);
-	auto score2 = Score().Add(Point::Yuko);
+	FAIL();
+	/*auto score1 = Points().Add(Point::Yuko).Add(Point::Shido);
+	auto score2 = Points().Add(Point::Yuko);
 	Fight fight { score1, score2 };
 	fight.rules = std::make_shared<Ipponboard::Rules2017>();
 
@@ -153,6 +161,7 @@ TEST_CASE("rules2017: no one has won if points are equal and shidos aren't in go
 
 	REQUIRE_FALSE(fight.HasWon(second));
 	REQUIRE_FALSE(fight.HasWon(first));
+	*/
 }
 
 //TEST_CASE("Setting negative seconds enabled golden score")
