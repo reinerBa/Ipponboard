@@ -117,7 +117,6 @@ HEADERS = pch.h \
 	../core/TournamentMode.h \
 	../core/TournamentModel.h \
 	../core/ControllerConfig.h \
-    ../core/Rules.h \
     ../core/AbstractRules.h \
     ../core/RuleSet.h \
     ../core/Calculator.h \
@@ -153,11 +152,11 @@ SOURCES = Main.cpp \
 	../core/FightCategory.cpp \
 	../core/Fighter.cpp \
 	../core/Fight.cpp \
+    ../core/RuleSet.cpp \
     ../core/Score.cpp \
 	../core/StateMachine.cpp \
 	../core/TournamentMode.cpp \
 	../core/TournamentModel.cpp \
-    ../core/Rules.cpp \
     UpdateChecker.cpp \
     VersionComparer.cpp \
     FightCategoryParser.cpp

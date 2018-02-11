@@ -66,12 +66,12 @@ void Calculator::SetCountSubscores(bool countSubscores)
 
 bool Calculator::HasHansokumake(const Score &score, Calculator::FighterEnum who) const
 {
-	return score.Hansokumake(who) || score.Shido(who) > _ruleSet.MaxShidoCount;
+	return score.Hansokumake(who) || score.Shido(who) == _ruleSet.MaxShidoCount;
 }
 
 bool Calculator::HasIppon(Score const& score, Calculator::FighterEnum who) const
 {
-	return score.Ippons(who) || _ruleSet.AwaseteIppon && score.Wazaari(who) >= _ruleSet.MaxWazaariCount;
+	return score.Ippons(who) || _ruleSet.AwaseteIppon && score.Wazaari(who) == _ruleSet.MaxWazaariCount;
 }
 
 int Calculator::Yukos(Score const& score, Calculator::FighterEnum whos) const
@@ -141,6 +141,11 @@ void Calculator::assureSingleCorrectScore(Score& score, FighterEnum whos)
 
 	if (score.GetValue(whos, Point::Hansokumake) < 0)
 		score.SetValue(whos, Point::Hansokumake, 0);
+
+	// if hansokumake is set, there can not be all shidos be set (other way round is possible)
+	if (score.GetValue(whos, Point::Hansokumake) == 1 &&
+		score.GetValue(whos, Point::Shido) == _ruleSet.MaxShidoCount)
+		score.SetValue(whos, Point::Shido, _ruleSet.MaxShidoCount - 1);
 }
 
 void Calculator::AddPoint(Score& score, FighterEnum whos, Point point)
@@ -157,28 +162,28 @@ void Calculator::AddPoint(Score& score, FighterEnum whos, Point point)
 	{
 		if (_ruleSet.AlwaysAutoAdjustPoints)
 		{
-			if (IsShidoMatchPoint(score, whos))
+			if (_ruleSet.ShidoAddsPoint)
 			{
-				score.Increment(other, Point::Ippon);
+				if (_ruleSet.MaxShidoCount - 1 == curVal)
+				{
+					score.Decrement(other, Point::Wazaari);
+					score.Increment(other, Point::Ippon);
+				}
+				else if (_ruleSet.MaxShidoCount - 2 == curVal)
+				{
+					score.Decrement(other, Point::Yuko);
+					score.Increment(other, Point::Wazaari);
+				}
+				else if (_ruleSet.MaxShidoCount - 3 == curVal)
+				{
+					score.Increment(other, Point::Yuko);
+				}
 			}
 			else
 			{
-				if (_ruleSet.ShidoAddsPoint)
+				if (IsShidoMatchPoint(score, whos))
 				{
-					if (_ruleSet.MaxShidoCount > 2 && curVal == 3)
-					{
-						score.Decrement(other, Point::Wazaari);
-						score.Increment(other, Point::Ippon);
-					}
-					else if (_ruleSet.MaxShidoCount > 1 && curVal == 2)
-					{
-						score.Decrement(other, Point::Yuko);
-						score.Increment(other, Point::Wazaari);
-					}
-					else if (_ruleSet.MaxShidoCount > 0 && curVal == 1)
-					{
-						score.Increment(other, Point::Yuko);
-					}
+					score.Increment(other, Point::Ippon);
 				}
 			}
 		}
@@ -196,27 +201,31 @@ void Calculator::RemovePoint(Score& score, FighterEnum whos, Point point)
 	if (point == Point::Hansokumake)
 	{
 		score.Decrement(other, Point::Ippon);
-	}
-	else if (point == Point::Shido && _ruleSet.AlwaysAutoAdjustPoints)
-	{
-		if (_ruleSet.MaxShidoCount + 1 == curVal)
+
+		// no direct Hansokumake? -> disqualification by single shidos
+		if (curVal == 0 && score.GetValue(whos, Point::Shido) > 0)
 		{
-			// distinguish between 4 Shido and Hansokumake
-			score.Decrement(other, Point::Ippon);
+			RemovePoint(score, whos, Point::Shido);
 		}
-		else
+	}
+	else if (point == Point::Shido)
+	{
+		if (_ruleSet.AlwaysAutoAdjustPoints)
 		{
-			if (_ruleSet.MaxShidoCount > 2 && curVal == 4)
+			if (_ruleSet.MaxShidoCount == curVal)
 			{
 				score.Decrement(other, Point::Ippon);
-				score.Increment(other, Point::Wazaari);
+				if (_ruleSet.ShidoAddsPoint)
+				{
+					score.Increment(other, Point::Wazaari);
+				}
 			}
-			else if (_ruleSet.MaxShidoCount > 1 && curVal == 3)
+			else if (_ruleSet.MaxShidoCount - 1 == curVal && _ruleSet.ShidoAddsPoint)
 			{
 				score.Decrement(other, Point::Wazaari);
 				score.Increment(other, Point::Yuko);
 			}
-			else if (_ruleSet.MaxShidoCount > 0 && curVal == 2)
+			else if (_ruleSet.MaxShidoCount - 2 == curVal && _ruleSet.ShidoAddsPoint)
 			{
 				score.Decrement(other, Point::Yuko);
 			}
@@ -248,7 +257,7 @@ bool Calculator::IsAlmostAwaseteIppon(const Score &score, FighterEnum whos) cons
 
 bool Calculator::IsShidoMatchPoint(Score const& score, FighterEnum whos) const
 {
-	return score.Shido(whos) == _ruleSet.MaxShidoCount;  //TODO: add a test for the correct behaviour!
+	return score.Shido(whos) == _ruleSet.MaxShidoCount - 1;  //TODO: add a test for the correct behaviour!
 }
 
 bool Calculator::IsLeading(const Calculator::Score &score, Calculator::FighterEnum who, bool /*isGoldenScoreMode*/) const

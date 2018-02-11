@@ -1,6 +1,6 @@
 ﻿#include "View.h"
 #include "ui_view_horizontal.h"
-#include "../core/Rules.h"
+#include "../core/RuleSet.h"
 #include "../core/Fight.h"
 
 #include <QPainter>
@@ -166,7 +166,7 @@ void View::UpdateView()
 	Q_ASSERT(m_pController && "Controller not set!");
 
 	// display/hide 3rd shido
-	if (m_pController->CurrentMatch().GetRuleSet().MaxShidoCount < 3)
+	if (m_pController->CurrentMatch().GetRuleSet().MaxShidoCount < 4)
 	{
 		ui->image_shido3_first->hide();
 		ui->image_shido3_second->hide();
@@ -876,11 +876,7 @@ void View::update_hansokumake(Ipponboard::FighterEnum who) const
 		pImage = ui->image_hansokumake_second;
 	}
 
-	const int score_hansokumake = m_pController->GetScoreValue(GVF_(who), Point::Hansokumake);
-	const int score_shido = m_pController->GetScoreValue(GVF_(who), Point::Shido);
-
-	if (score_hansokumake > 0
-			|| score_shido == m_pController->CurrentMatch().GetRuleSet().MaxShidoCount + 1)
+	if (m_pController->CurrentMatch().HasHansokumake(GVF_(who)))
 	{
 		pImage->UpdateImage(":res/images/on_hansokumake.png");
 	}

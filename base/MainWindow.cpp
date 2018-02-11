@@ -296,29 +296,29 @@ void MainWindow::ui_check_language_items()
 void MainWindow::ui_check_rules_items()
 {
 	auto const& rules = m_pController->CurrentMatch().GetRuleSet();
-	m_pUi->actionRulesClassic->setChecked(rules.Name == ClassicRules::StaticName);
-	m_pUi->actionRules2013->setChecked(rules.Name == Rules2013::StaticName);
-	m_pUi->actionRules2017->setChecked(rules.Name == Rules2017::StaticName);
-	m_pUi->actionRules2017U15->setChecked(rules.Name == Rules2017U15::StaticName);
-	m_pUi->actionRules2018->setChecked(rules.Name == Rules2018::StaticName);
+	m_pUi->actionRulesClassic->setChecked(rules.IsType(RuleSet::Type::Classic));
+	m_pUi->actionRules2013->setChecked(rules.IsType(RuleSet::Type::Rules2013));
+	m_pUi->actionRules2017->setChecked(rules.IsType(RuleSet::Type::Rules2017));
+	m_pUi->actionRules2017U15->setChecked(rules.IsType(RuleSet::Type::Rules2017U15));
+	m_pUi->actionRules2018->setChecked(rules.IsType(RuleSet::Type::Rules2018));
 
-	if (rules.Name == ClassicRules::StaticName)
+	if (rules.IsType(RuleSet::Type::Classic))
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRulesClassic->text());
 	}
-	else if (rules.Name == Rules2013::StaticName)
+	else if (rules.IsType(RuleSet::Type::Rules2013))
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2013->text());
 	}
-	else if (rules.Name == Rules2017::StaticName)
+	else if (rules.IsType(RuleSet::Type::Rules2017))
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2017->text());
 	}
-	else if (rules.Name == Rules2017U15::StaticName)
+	else if (rules.IsType(RuleSet::Type::Rules2017U15))
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2017U15->text());
 	}
-	else if (rules.Name == Rules2018::StaticName)
+	else if (rules.IsType(RuleSet::Type::Rules2018))
 	{
 		m_pUi->label_usedRules->setText(m_pUi->actionRules2018->text());
 	}
@@ -397,7 +397,7 @@ void MainWindow::write_specific_settings(QSettings& settings)
 	{
 		settings.remove("");
 		settings.setValue(str_tag_MatLabel, m_MatLabel);
-		settings.setValue(str_tag_rules, m_pController->CurrentMatch().GetRuleSet().Name);
+		settings.setValue(str_tag_rules, m_pController->CurrentMatch().GetRuleSet().GetName());
 	}
 	settings.endGroup();
 }
@@ -411,7 +411,7 @@ void MainWindow::read_specific_settings(QSettings& settings)
 		m_pSecondaryView->SetMat(m_MatLabel);
 
 		// rules
-		auto rules = RulesFactory::Create(settings.value(str_tag_rules).toString());
+		auto rules = RuleSet::Create(settings.value(str_tag_rules).toString());
 		m_pController->SetRules(rules);
 	}
 	settings.endGroup();

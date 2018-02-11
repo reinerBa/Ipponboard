@@ -9,7 +9,7 @@
 #define TOURNAMENTMODE_H
 
 #include "Enums.h"
-#include "Rules.h"
+#include "RuleSet.h"
 
 #include <QString>
 #include <QStringList>
@@ -83,7 +83,7 @@ public: // nothing to encapsulate here
 	QString weights;
 	QString listTemplate;
 	QString options;
-	QString rules { RulesFactory::GetDefaultName() };
+	QString rules { RuleSet::GetName(RuleSet::Type::Default) };
 	OverridesList fightTimeOverrides;
 	int nRounds;
 	int fightTimeInSeconds; // TODO: rename to duration!

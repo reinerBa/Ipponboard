@@ -6,7 +6,7 @@
 //
 
 #include "TournamentMode.h"
-#include "Rules.h"
+#include "RuleSet.h"
 
 #include <QString>
 #include <QStringList>
@@ -143,7 +143,7 @@ TournamentMode TournamentMode::Default()
 	mode.nRounds = 2;
 	mode.weightsAreDoubled = true;
 	//mode.listTemplate = m_pUi->comboBox_template->itemText(0);
-	mode.rules = RulesFactory::GetDefaultName();
+	mode.rules = RuleSet::GetName(RuleSet::Type::Default);
 
 	return std::move(mode);
 }

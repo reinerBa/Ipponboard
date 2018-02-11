@@ -25,7 +25,7 @@ namespace Ipponboard
 {
 // forwards
 class Controller;
-struct RuleSet;
+class RuleSet;
 
 static char const* const state_names[] = { "Stopped", "Running", "Ended", "Holding" };
 static char const* const point_type_names[] = { "Ippon", "Wazaari", "Yuko", "Shido", "Hansokumake" };
@@ -65,7 +65,8 @@ public:
 	struct revoke_ippon_type { enum { type = Ipponboard::Point::Ippon, revoke = true }; };
 	struct revoke_wazaari_type { enum { type = Ipponboard::Point::Wazaari, revoke = true }; };
 	struct revoke_yuko_type { enum { type = Ipponboard::Point::Yuko, revoke = true }; };
-	struct revoke_shido_hm_type	{};
+	struct revoke_shido_type { enum { type = Ipponboard::Point::Shido, revoke = true }; };
+	struct revoke_hansokumake_type { enum { type = Ipponboard::Point::Hansokumake, revoke = true }; };
 
 	typedef PointEvent<ippon_type	   > Ippon;
 	typedef PointEvent<wazaari_type	   > Wazaari;
@@ -76,8 +77,8 @@ public:
 	typedef PointEvent<revoke_ippon_type   > RevokeIppon;
 	typedef PointEvent<revoke_wazaari_type > RevokeWazaari;
 	typedef PointEvent<revoke_yuko_type    > RevokeYuko;
-	typedef PointEvent<revoke_shido_hm_type> RevokeShidoHM;
-
+	typedef PointEvent<revoke_shido_type   > RevokeShido;
+	typedef PointEvent<revoke_hansokumake_type> RevokeHM;
 
 	template<typename T>
 	struct TimeEvent
@@ -143,7 +144,6 @@ public:
 
 	void add_point(Ippon const& evt);
 	void add_point(Shido const& evt);
-	void add_point(PointEvent<revoke_shido_hm_type> const& evt);
 	void add_point(Hansokumake const& evt);
 	void add_point(HoldTimeEvent const& evt);
 
@@ -218,7 +218,8 @@ public:
 			a_row < Stopped , Finish		, Stopped   , &sm::save									>,
 			//row < Stopped , Osaekomi_Toketa, Holding	, &sm::yoshi		, &sm::is_sonomama		>,
 			a_row < Stopped , Osaekomi_Toketa, Holding	, &sm::yoshi								>,	// JUST FOR CONVENIENCE !!!
-			a_row < Stopped , RevokeShidoHM	, Stopped	, &sm::add_point							>,
+			a_row < Stopped , RevokeShido	, Stopped	, &sm::add_point							>,
+			a_row < Stopped , RevokeHM	    , Stopped	, &sm::add_point							>,
 			a_row < Stopped	, RevokeWazaari	, Stopped	, &sm::add_point							>,
 			a_row < Stopped	, RevokeYuko	, Stopped	, &sm::add_point							>,
 			a_row < Stopped , Ippon			, Stopped	, &sm::add_point							>,	// just to correct values...
@@ -237,10 +238,11 @@ public:
 			a_row < Running , Osaekomi_Toketa, Holding	, &sm::start_timer							>,
 			a_row < Running	, RevokeWazaari	, Running	, &sm::add_point							>,
 			a_row < Running	, RevokeYuko	, Running	, &sm::add_point							>,
-			a_row < Running , RevokeShidoHM	, Running	, &sm::add_point							>,	// just to correct values...
+			a_row < Running , RevokeShido   , Running	, &sm::add_point							>,	// just to correct values...
+			a_row < Running , RevokeHM	    , Running	, &sm::add_point							>,	// just to correct values...
 			a_row < Running , Hansokumake	, Stopped	, &sm::add_point							>,	// just to correct values...
 			a_row < Running , Shido			, Running	, &sm::add_point			                >,
-			row < Running , Shido			, Stopped	, &sm::add_point_stop_timer	, &sm::shido_is_match_point	>,	// just to correct values...
+			  row < Running , Shido			, Stopped	, &sm::add_point_stop_timer	, &sm::shido_is_match_point	>,	// just to correct values...
 			//	  +---------+---------------+-----------+-------------------+-----------------------+
 			row < Holding , Osaekomi_Toketa, Running	, &sm::stop_timer			, &sm::time_is_left		>,
 			row < Holding , Osaekomi_Toketa, Stopped	, &sm::stop_timer			, &sm::time_is_up		>,
@@ -254,7 +256,8 @@ public:
 			a_row < Holding , Shido			, Holding	, &sm::add_point                                    >,
 			a_row < Holding , RevokeWazaari	, Holding	, &sm::add_point									>,	// just to correct values...
 			a_row < Holding , RevokeYuko	, Holding	, &sm::add_point									>,	// just to correct values...
-			a_row < Holding , RevokeShidoHM	, Holding	, &sm::add_point									>,	// just to correct values...
+			a_row < Holding , RevokeShido   , Holding	, &sm::add_point									>,	// just to correct values...
+			a_row < Holding , RevokeHM	    , Holding	, &sm::add_point									>,	// just to correct values...
 			//
 			// Note: Transitions are processed bottom up!
 			row < Holding , HoldTimeEvent	, Holding	, &sm::add_point			, &sm::has_YukoTime     >,

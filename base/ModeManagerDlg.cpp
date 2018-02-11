@@ -14,7 +14,7 @@
 #include "ModeManagerDlg.h"
 #include "ui_ModeManagerDlg.h"
 #include "..\core\Enums.h"
-#include "..\core\Rules.h"
+#include "..\core\RuleSet.h"
 
 #include <QComboBox>
 #include <QStringList>
@@ -38,7 +38,7 @@ ModeManagerDlg::ModeManagerDlg(TournamentMode::List const& modes,
 	m_pUi->comboBox_template->addItems(templates);
 
 	m_pUi->comboBox_rules->clear();
-	m_pUi->comboBox_rules->addItems(RulesFactory::GetNames());
+	m_pUi->comboBox_rules->addItems(RuleSet::GetNames());
 
 	if (!m_dialogData.empty())
 	{

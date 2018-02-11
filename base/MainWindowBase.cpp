@@ -14,7 +14,7 @@
 #include "../base/versioninfo.h"
 #include "../base/SettingsDlg.h"
 #include "../gamepad/gamepad.h"
-#include "../core/Rules.h"
+#include "../core/RuleSet.h"
 #include "../util/path_helpers.h"
 
 #include <QApplication>
@@ -376,7 +376,7 @@ void MainWindowBase::on_actionRulesClassic_triggered(bool checked)
 {
 	if (checked)
 	{
-		m_pController->SetRules(std::make_shared<ClassicRules>());
+		m_pController->SetRules(RuleSet::Create(RuleSet::Type::Classic));
 		ui_check_rules_items();
 	}
 }
@@ -385,7 +385,7 @@ void MainWindowBase::on_actionRules2013_triggered(bool checked)
 {
 	if (checked)
 	{
-		m_pController->SetRules(std::make_shared<Rules2013>());
+		m_pController->SetRules(RuleSet::Create(RuleSet::Type::Rules2013));
 		ui_check_rules_items();
 	}
 }
@@ -394,7 +394,7 @@ void MainWindowBase::on_actionRules2017_triggered(bool checked)
 {
 	if (checked)
 	{
-		m_pController->SetRules(std::make_shared<Rules2017>());
+		m_pController->SetRules(RuleSet::Create(RuleSet::Type::Rules2017));
 		ui_check_rules_items();
 	}
 }
@@ -403,7 +403,7 @@ void MainWindowBase::on_actionRules2017U15_triggered(bool checked)
 {
 	if (checked)
 	{
-		m_pController->SetRules(std::make_shared<Rules2017U15>());
+		m_pController->SetRules(RuleSet::Create(RuleSet::Type::Rules2017U15));
 		ui_check_rules_items();
 	}
 }
@@ -412,7 +412,7 @@ void MainWindowBase::on_actionRules2018_triggered(bool checked)
 {
 	if (checked)
 	{
-		m_pController->SetRules(std::make_shared<Rules2018>());
+		m_pController->SetRules(RuleSet::Create(RuleSet::Type::Rules2018));
 		ui_check_rules_items();
 	}
 }

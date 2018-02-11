@@ -2,11 +2,11 @@
 #include "../core/Score.h"
 #include "../core/Enums.h"
 #include "../core/Fight.h"
-#include "../core/Rules.h"
+#include "../core/RuleSet.h"
 
 #include "../core/Score.cpp"
 #include "../core/Fight.cpp"
-#include "../core/Rules.cpp"
+#include "../core/RuleSet.cpp"
 #include "../core/Calculator.cpp"
 
 using Ipponboard::Fight;

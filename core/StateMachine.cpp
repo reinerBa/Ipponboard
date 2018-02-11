@@ -10,18 +10,18 @@ using namespace Ipponboard;
 void IpponboardSM_::add_point(HoldTimeEvent const& evt)
 //---------------------------------------------------------
 {
-	if (m_pCore->is_auto_adjust())
+	if (m_pCore->is_auto_adjust() && evt.secs > 0)
 	{
-		if (CurrentRules().GetOsaekomiValue(Point::Yuko) == evt.secs)
+		if (CurrentRules().OsaekomiValue_Yuko == evt.secs)
 		{
 			m_pCore->CurrentMatch().AddPoint(evt.who, Point::Yuko);
 		}
-		else if (CurrentRules().GetOsaekomiValue(Point::Wazaari) == evt.secs)
+		else if (CurrentRules().OsaekomiValue_Wazaari == evt.secs)
 		{
 			m_pCore->CurrentMatch().RemovePoint(evt.who, Point::Yuko);
 			m_pCore->CurrentMatch().AddPoint(evt.who, Point::Wazaari);
 		}
-		else if (CurrentRules().GetOsaekomiValue(Point::Ippon) == evt.secs)
+		else if (CurrentRules().OsaekomiValue_Ippon == evt.secs)
 		{
 			m_pCore->CurrentMatch().RemovePoint(evt.who, Point::Wazaari);
 			m_pCore->CurrentMatch().AddPoint(evt.who, Point::Ippon);
@@ -40,23 +40,25 @@ bool IpponboardSM_::wazaari_is_match_point(Wazaari const& evt)
 bool IpponboardSM_::has_IpponTime(HoldTimeEvent const& evt)
 //---------------------------------------------------------
 {
-	return CurrentRules().GetOsaekomiValue(Point::Ippon) == evt.secs;
+	return evt.secs > 0 && CurrentRules().OsaekomiValue_Ippon == evt.secs;
 }
 
 //---------------------------------------------------------
 bool IpponboardSM_::has_WazaariTime(HoldTimeEvent const& evt)
 //---------------------------------------------------------
 {
-	return CurrentRules().GetOsaekomiValue(Point::Wazaari) == evt.secs;
+	return evt.secs > 0 && CurrentRules().OsaekomiValue_Wazaari == evt.secs;
 }
 
 //---------------------------------------------------------
 bool IpponboardSM_::has_AwaseteTime(HoldTimeEvent const& evt)
 //---------------------------------------------------------
 {
-	if (CurrentRules().AwaseteIppon && CurrentMatch().IsAlmostAwaseteIppon(evt.who))
+	if (evt.secs > 0
+		&& CurrentRules().AwaseteIppon
+		&& CurrentMatch().IsAlmostAwaseteIppon(evt.who))
 	{
-		return CurrentRules().GetOsaekomiValue(Point::Wazaari) == evt.secs;
+		return CurrentRules().OsaekomiValue_Wazaari == evt.secs;
 	}
 
 	return false;
@@ -66,7 +68,7 @@ bool IpponboardSM_::has_AwaseteTime(HoldTimeEvent const& evt)
 bool IpponboardSM_::has_YukoTime(HoldTimeEvent const& evt)
 //---------------------------------------------------------
 {
-	return CurrentRules().GetOsaekomiValue(Point::Yuko) == evt.secs;
+	return evt.secs > 0 && CurrentRules().OsaekomiValue_Yuko == evt.secs;
 }
 
 //---------------------------------------------------------
@@ -165,20 +167,6 @@ void IpponboardSM_::add_point(PointEvent<ippon_type> const& evt)
 void IpponboardSM_::add_point(PointEvent<shido_type> const& evt)
 {
 	CurrentMatch().AddPoint(evt.who, Point::Shido);
-}
-
-void IpponboardSM_::add_point(PointEvent<revoke_shido_hm_type> const& evt)
-{
-	//FIXME: how do we distinguish between real Hansokumake and max Shidos?
-	//TODO: add verifying test!
-	if (CurrentMatch().GetScore().Hansokumake(evt.who))
-	{
-		CurrentMatch().RemovePoint(evt.who, Point::Hansokumake);
-	}
-	else
-	{
-		CurrentMatch().RemovePoint(evt.who, Point::Shido);
-	}
 }
 
 void IpponboardSM_::add_point(PointEvent<hansokumake_type> const& evt)

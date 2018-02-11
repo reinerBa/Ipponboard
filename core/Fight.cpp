@@ -11,13 +11,11 @@ using namespace Ipponboard;
 
 Fight::Fight()
 	: weight("-")
-	, rules(new ClassicRules)
 	, calc()
 {
 	fighters[0] = SimpleFighter();
 	fighters[1] = SimpleFighter();
 
-	calc = Calculator{ rules->Get() };
 	SetAutoAdjustPoints(false);
 	SetCountSubscores(false);
 	current_score.Clear();
@@ -38,6 +36,11 @@ void Fight::RemovePoint(FighterEnum whos, Point point)
 bool Fight::IsShidoMatchPoint(FighterEnum whos) const
 {
 	return calc.IsShidoMatchPoint(current_score, whos);
+}
+
+bool Fight::HasHansokumake(FighterEnum who) const
+{
+	return calc.HasHansokumake(current_score, who);
 }
 
 int Fight::CompareScore() const
@@ -65,10 +68,9 @@ bool Fight::IsAlmostAwaseteIppon(FighterEnum whos) const
 	return calc.IsAlmostAwaseteIppon(current_score, whos);
 }
 
-void Fight::SetRules(std::shared_ptr<AbstractRules> pRules)
+void Fight::SetRules(RuleSet rules)
 {
-	rules = pRules;
-	calc = Calculator{ rules->Get() };
+	calc = Calculator{ rules };
 	current_score.Clear();
 }
 

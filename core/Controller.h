@@ -79,7 +79,7 @@ public:
 	QString const& GetCategoryName() const { return m_weight_class; } //TODO: weight class should be part of tournament!
 	void SetGoldenScore(bool isGS);
 	bool IsGoldenScore() const { return is_golden_score(); }
-	void SetRules(std::shared_ptr<AbstractRules> rules);
+	void SetRules(RuleSet rules);
 	Fight& CurrentMatch() override;
 	Fight const& CurrentMatch() const;
 	bool IsAutoAdjustPoints() const final;
@@ -201,8 +201,7 @@ private:
 	QString m_labelHome;
 	QString m_labelGuest;
 	void reset_timers();
-	std::shared_ptr<AbstractRules> m_rules;
-	Calculator m_calc;
+	RuleSet m_rules;
 };
 } // namespace Ipponboard
 

@@ -10,7 +10,6 @@
 
 #include "Score.h"
 #include "Enums.h"
-#include "Rules.h"
 #include "Calculator.h"
 #include "RuleSet.h"
 
@@ -65,12 +64,13 @@ public:
 	bool IsAwaseteIppon(FighterEnum whos) const;
 	bool IsAlmostAwaseteIppon(FighterEnum whos) const;
 	bool IsShidoMatchPoint(FighterEnum whos) const;
+	bool HasHansokumake(FighterEnum who) const;
 	int CompareScore() const;
 	bool IsLeading(FighterEnum who) const;
 
 	bool IsGoldenScore() const { return _isGoldenScore; }
 	void SetGoldenScore(bool val) { _isGoldenScore = val; }
-	void SetRules(std::shared_ptr<AbstractRules> pRules);
+	void SetRules(RuleSet rules);
 	void SetAutoAdjustPoints(bool autoAdjust);
 	void SetCountSubscores(bool countSubscores);
 
@@ -99,9 +99,6 @@ private:
 	Score current_score;
 	int seconds_elapsed { 0 };
 	int round_time_seconds { 0 };
-	std::shared_ptr<AbstractRules> rules; // TODO: this should be removed if possible
-
-
 };
 } // namespace Ipponboard
 

@@ -1,7 +1,7 @@
 #include "../../../../devtools/Catch/single_include/catch.hpp"
 #include "../core/Score.h"
 #include "../core/Enums.h"
-#include "../core/Rules.h"
+#include "../core/RuleSet.h"
 #include "../core/Fight.h"
 #include "../core/Calculator.h"
 
@@ -141,7 +141,7 @@ TEST_CASE("is awasette ippon")
 
 TEST_CASE("rules 2017: only first shido does not count")
 {
-	auto rules = std::make_shared<Ipponboard::Rules2017>();
+	auto rules = RuleSet::Create(RuleSet::Type::Rules2017);
 	Fight f;
 	f.SetRules(rules);
 	f.SetGoldenScore(false);
@@ -157,7 +157,7 @@ TEST_CASE("rules 2017: only first shido does not count")
 
 TEST_CASE("rules 2017: first shido does count in golden score")
 {
-	auto rules = std::make_shared<Ipponboard::Rules2017>();
+	auto rules = RuleSet::Create(RuleSet::Type::Rules2017);
 
 	Fight f;
 	f.SetRules(rules);

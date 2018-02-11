@@ -13,7 +13,7 @@ namespace Ipponboard
 // forwards
 class IView;
 class IGoldenScoreView;
-class AbstractRules;
+class RuleSet;
 class Fight;
 
 class IController
@@ -41,9 +41,8 @@ public:
 	virtual QString const& GetCategoryName() const = 0;
 	virtual void SetGoldenScore(bool isGS) = 0;
 	virtual bool IsGoldenScore() const = 0;
-	//virtual std::shared_ptr<AbstractRules> GetRules() const = 0;
 	virtual Fight& CurrentMatch() = 0;
-	virtual void SetRules(std::shared_ptr<AbstractRules> rules) = 0;
+	virtual void SetRules(RuleSet rules) = 0;
 	virtual bool IsAutoAdjustPoints() const = 0;
 	virtual void SetAutoAdjustPoints(bool isActive) = 0;
 	virtual void SetOption(Ipponboard::EOption option, bool isSet) = 0;

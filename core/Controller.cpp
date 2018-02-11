@@ -6,7 +6,7 @@
 #include "TournamentMode.h"
 #include "TournamentModel.h"
 #include "StateMachine.h"
-#include "Rules.h"
+#include "RuleSet.h"
 
 #include <QTimer>
 #include <QSound>
@@ -86,7 +86,7 @@ void Controller::InitTournament(TournamentMode const& mode)
 	m_Tournament.clear();
 
 	m_mode = mode;
-	m_rules = RulesFactory::Create(m_mode.rules);
+	m_rules = RuleSet::Create(m_mode.rules);
 	m_isCountSubscores = m_mode.IsOptionSet(TournamentMode::str_Option_AllSubscoresCount);
 
 	QStringList actualWeights = m_mode.weights.split(';');
@@ -193,8 +193,11 @@ void Controller::DoAction(EAction action, FighterEnum whos, bool doRevoke)
 			break;
 
 		case eAction_Shido:
+			m_pSM->process_event(IpponboardSM_::RevokeShido(whos));
+			break;
+
 		case eAction_Hansokumake:
-			m_pSM->process_event(IpponboardSM_::RevokeShidoHM(whos));
+			m_pSM->process_event(IpponboardSM_::RevokeHM(whos));
 			break;
 
 		case eAction_ResetOsaeKomi:
@@ -614,7 +617,7 @@ void Controller::SetGoldenScore(bool isGS)
 	update_views();
 }
 
-void Controller::SetRules(std::shared_ptr<AbstractRules> rules)
+void Controller::SetRules(RuleSet rules)
 {
 	m_rules = rules;
 
@@ -1129,9 +1132,9 @@ void Controller::update_hold_time()
 	const int secs = m_pTimeHold->second();
 
 	if (secs > 0 &&
-			(CurrentMatch().GetRuleSet().GetOsaekomiValue(Point::Yuko) == secs
-			 || CurrentMatch().GetRuleSet().GetOsaekomiValue(Point::Wazaari) == secs
-			 || CurrentMatch().GetRuleSet().GetOsaekomiValue(Point::Ippon) == secs))
+			(CurrentMatch().GetRuleSet().OsaekomiValue_Yuko == secs
+			 || CurrentMatch().GetRuleSet().OsaekomiValue_Wazaari == secs
+			 || CurrentMatch().GetRuleSet().OsaekomiValue_Ippon == secs))
 	{
 		m_pSM->process_event(IpponboardSM_::HoldTimeEvent(secs, m_Tori));
 		m_State = EState(m_pSM->current_state()[0]);
