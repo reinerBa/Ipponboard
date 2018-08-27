@@ -1,4 +1,4 @@
-#include "../../../../devtools/Catch/single_include/catch.hpp"
+#include "../../../../devtools/Catch/single_include/catch2/catch.hpp"
 #include "../core/TournamentMode.h"
 #include "../core/TournamentMode.cpp"
 
