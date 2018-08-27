@@ -52,26 +52,45 @@ TEST_CASE("Shido rules for fights")
 	REQUIRE(IsScoreLess(classicRules, twoShido, yukoWithTwoShido));
 	REQUIRE(IsScoreLess(classicRules, empty, yukoWithTwoShido));
 	*/
+
+	FAIL();
 }
 
-//TEST_CASE("4th shido sets hansokumake")
-//{
-//	Score one;
-//	Score two;
-//
-//	one.Add(Point::Shido);
-//	one.Add(Point::Shido);
-//	one.Add(Point::Shido);
-//	one.Add(Point::Shido);
-//	two.Add(Hansokumake);
-//
-//	one.Hansokumake
-//	REQUIRE_FALSE(one.IsLess(two));
-//	REQUIRE_FALSE(two.IsLess(one));
-//}
+TEST_CASE("n_th shido sets hansokumake")
+{
+	FAIL();
+	//	Score one;
+	//	Score two;
+	//
+	//	one.Add(Point::Shido);
+	//	one.Add(Point::Shido);
+	//	one.Add(Point::Shido);
+	//	one.Add(Point::Shido);
+	//	two.Add(Hansokumake);
+	//
+	//	one.Hansokumake
+	//	REQUIRE_FALSE(one.IsLess(two));
+	//	REQUIRE_FALSE(two.IsLess(one));
+}
 
 TEST_CASE("Each fighter can have Hansokumake")
 {
+	std::vector<RuleSet> ruleSets{
+		RuleSet::Create(RuleSet::Type::Classic),
+		RuleSet::Create(RuleSet::Type::Rules2013),
+		RuleSet::Create(RuleSet::Type::Rules2017),
+		RuleSet::Create(RuleSet::Type::Rules2018)
+	};
+
+	Score score;
+	auto const isGoldenScore = false;
+	for (auto const& r : ruleSets)
+	{
+		auto calc = Calculator(r);
+		REQUIRE(calc.CompareScore(score, isGoldenScore) == 0);
+	}
+
+	FAIL();
 	//FIXME: rewrite this test
 	/*
 	Score score;
@@ -96,47 +115,102 @@ TEST_CASE("Each fighter can have Hansokumake")
 	*/
 }
 
-TEST_CASE("is awasette ippon")
+TEST_CASE("empty score has no awasette ippon")
 {
-	//FIXME: rewrite this test
-	/*Score score;
-	auto classicRules = std::make_shared<Ipponboard::ClassicRules>();
-	auto rules2013 = std::make_shared<Ipponboard::Rules2013>();
-	auto rules2017 = std::make_shared<Ipponboard::Rules2017>();
-	auto rules2018 = std::make_shared<Ipponboard::Rules2018>();
+	std::vector<RuleSet> ruleSets{
+		RuleSet::Create(RuleSet::Type::Classic),
+		RuleSet::Create(RuleSet::Type::Rules2013),
+		RuleSet::Create(RuleSet::Type::Rules2017),
+		RuleSet::Create(RuleSet::Type::Rules2018)
+	};
 
-	REQUIRE_FALSE(classicRules->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2013->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2017->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2018->IsAwaseteIppon(score));
+	Score score;
+	for (auto const& r : ruleSets)
+	{
+		auto calc = Calculator(r);
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+	}
+}
 
-	score.Add(Point::Wazaari);
+TEST_CASE("one wazaari is no awasette ippon")
+{
+	std::vector<RuleSet> ruleSets{
+		RuleSet::Create(RuleSet::Type::Classic),
+		RuleSet::Create(RuleSet::Type::Rules2013),
+		RuleSet::Create(RuleSet::Type::Rules2017),
+		RuleSet::Create(RuleSet::Type::Rules2018)
+	};
 
-	REQUIRE_FALSE(classicRules->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2013->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2017->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2018->IsAwaseteIppon(score));
+	Score score;
+	score.SetValue(FighterEnum::First, Point::Wazaari, 1);
+	for (auto const& r : ruleSets)
+	{
+		auto calc = Calculator(r);
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+	}
 
-	score.Add(Point::Wazaari);
+	score.Clear();
+	score.SetValue(FighterEnum::Second, Point::Wazaari, 1);
+	for (auto const& r : ruleSets)
+	{
+		auto calc = Calculator(r);
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+	}
+}
 
-	REQUIRE(classicRules->IsAwaseteIppon(score));
-	REQUIRE(rules2013->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2017->IsAwaseteIppon(score));
-	REQUIRE(rules2018->IsAwaseteIppon(score));
-*/
-	//TODO
-	//FIXME
-	/* not correct, yet
-	score.Add(Score::Point::Wazaari);
+TEST_CASE("two wazaari is awasete ippon")
+{
+	std::vector<RuleSet> ruleSets{
+		RuleSet::Create(RuleSet::Type::Classic),
+		RuleSet::Create(RuleSet::Type::Rules2013),
+		RuleSet::Create(RuleSet::Type::Rules2018)
+	};
 
-	std::cout << "ippon: " << score.Ippon() << ", ";
-	std::cout << "wazaari: " << score.Wazaari();
-	REQUIRE(classicRules->IsAwaseteIppon(score));
-	REQUIRE(rules2013->IsAwaseteIppon(score));
-	REQUIRE_FALSE(rules2017->IsAwaseteIppon(score));
-	REQUIRE(rules2018->IsAwaseteIppon(score));
-	*/
+	auto calc = Calculator(RuleSet::Create(RuleSet::Type::Classic));
+	Score score;
+	score.SetValue(FighterEnum::First, Point::Wazaari, 2);
+	for (auto const& r : ruleSets)
+	{
+		auto calc = Calculator(r);
+		REQUIRE(calc.IsAwaseteIppon(score, FighterEnum::First));
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+	}
 
+	score.Clear();
+	score.SetValue(FighterEnum::Second, Point::Wazaari, 2);
+	for (auto const& r : ruleSets)
+	{
+		auto calc = Calculator(r);
+		REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+		REQUIRE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+	}
+}
+
+TEST_CASE("rules 2017: no awasete ippon")
+{
+	auto calc = Calculator(RuleSet::Create(RuleSet::Type::Rules2017));
+	Score score;
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+
+	score.SetValue(FighterEnum::First, Point::Wazaari, 2);
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+
+	score.SetValue(FighterEnum::Second, Point::Wazaari, 2);
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+
+	score.SetValue(FighterEnum::First, Point::Wazaari, 20);
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
+
+	score.SetValue(FighterEnum::Second, Point::Wazaari, 20);
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::First));
+	REQUIRE_FALSE(calc.IsAwaseteIppon(score, FighterEnum::Second));
 }
 
 TEST_CASE("rules 2017: only first shido does not count")
