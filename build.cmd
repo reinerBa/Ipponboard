@@ -35,7 +35,8 @@ IF "%QMAKESPEC%"=="win32-msvc2013" (
 	CALL "%VS120COMNTOOLS%..\..\vc\vcvarsall.bat" x86
 )
 IF "%QMAKESPEC%"=="win32-msvc2015" (
-	CALL "%VS140COMNTOOLS%..\..\vc\vcvarsall.bat" x86
+	rem CALL "%VS140COMNTOOLS%..\..\vc\vcvarsall.bat" x86
+	call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\vsdevcmd.bat" -arch=x86
 )
 
 IF NOT EXIST "%BOOST_DIR%\boost" (

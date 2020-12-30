@@ -20,8 +20,8 @@ public:
 	void Increment(FighterEnum whos, Point point);
 	void Decrement(FighterEnum whos, Point point);
 
-	// convenience functions
-	int Ippons(FighterEnum whos) const;
+		// convenience functions
+	int Ippon(FighterEnum whos) const;
 	int Wazaari(FighterEnum whos) const;
 	int Yuko(FighterEnum whos) const;
 	int Shido(FighterEnum whos) const;

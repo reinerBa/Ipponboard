@@ -31,7 +31,7 @@ void Score::Decrement(FighterEnum whos, Point point)
 	data(whos)[static_cast<int>(point)] -= 1;
 }
 
-int Score::Ippons(FighterEnum whos) const
+int Score::Ippon(FighterEnum whos) const
 {
 	return GetValue(whos, Point::Ippon);
 }
@@ -65,4 +65,3 @@ const int *Score::data(FighterEnum whos) const
 {
 	return whos == First ? values1 : values2;
 }
-

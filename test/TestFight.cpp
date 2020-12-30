@@ -50,7 +50,7 @@ TEST_CASE("Fighter with less Shidos wins if points are equal (rules 2013)")
 	REQUIRE(fight.CompareScore() < 0);
 }
 
-TEST_CASE("Validate score points (subscore)")
+TEST_CASE("rules <= 2013: Validate score points (subscore)")
 {
 	FAIL();
 	/*auto first = FighterEnum::First;

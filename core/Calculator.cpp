@@ -71,7 +71,7 @@ bool Calculator::HasHansokumake(const Score &score, Calculator::FighterEnum who)
 
 bool Calculator::HasIppon(Score const& score, Calculator::FighterEnum who) const
 {
-	return score.Ippons(who) || _ruleSet.AwaseteIppon && score.Wazaari(who) == _ruleSet.MaxWazaariCount;
+	return score.Ippon(who) || _ruleSet.AwaseteIppon && score.Wazaari(who) == _ruleSet.MaxWazaariCount;
 }
 
 int Calculator::Yukos(Score const& score, Calculator::FighterEnum whos) const
@@ -289,12 +289,12 @@ bool Calculator::IsLeading(const Calculator::Score &score, Calculator::FighterEn
 		else  // GetScore_(eFirst).Yuko() == GetScore_(eSecond).Yuko()
 		{
 			if (score.Shido(FighterEnum::First) < score.Shido(FighterEnum::Second) &&
-					score.Shido(FighterEnum::Second) > 1)  // no "koka"!
+				score.Shido(FighterEnum::Second) > 1)  // no "koka"!
 			{
 				leader = FighterEnum::First;
 			}
 			else if (score.Shido(FighterEnum::First) > score.Shido(FighterEnum::Second) &&
-					 score.Shido(FighterEnum::First) > 1)
+				score.Shido(FighterEnum::First) > 1)
 			{
 				leader = FighterEnum::Second;
 			}
@@ -313,22 +313,27 @@ int Calculator::CompareScore(Score const& score, bool isGoldenScoreMode) const
 	auto first = Ipponboard::FighterEnum::First;
 	auto second = Ipponboard::FighterEnum::Second;
 
-	if (score.Hansokumake(first) < score.Hansokumake(second))
+	if (HasHansokumake(score, second))
 	{
+		if (HasHansokumake(score, first))
+		{
+			return 0;
+		}
+
 		return -1;
 	}
 
-	if (score.Hansokumake(first) > score.Hansokumake(second))
+	if (HasHansokumake(score, first) && !HasHansokumake(score, second))
 	{
 		return 1;
 	}
 
-	if (score.Ippons(first) > score.Ippons(second))
+	if (score.Ippon(first) > score.Ippon(second))
 	{
 		return -1;
 	}
 
-	if (score.Ippons(first) < score.Ippons(second))
+	if (score.Ippon(first) < score.Ippon(second))
 	{
 		return 1;
 	}
